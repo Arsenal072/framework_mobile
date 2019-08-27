@@ -61,6 +61,10 @@ function generateLoaders (loader, loaderOptions) {
     })
 }
 webpack 
-根据项目场景router，自动生成路由
-axios请求封装 请求前拦截，请求后拦截
-vuex
+# 1、页面权限，登录=》获取该用户权限列表=》根据权限列表生成能够访问的菜单=》点击菜单，进入页面
+# 2、接口权限，到未登录页，拦截去登录页，登录后去目标页
+# axios请求封装 请求前拦截，请求后拦截
+# vuex
+# 工具函数 utils.js filter
+# 全局组件、全局函数toast
+# icon引入 全局样式变量

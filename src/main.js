@@ -3,20 +3,32 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import { AlertPlugin, ToastPlugin } from 'vux'
+import store from './store/index'
+import Vuex from 'vuex'
 import 'lib-flexible/flexible.js'
+import FastClick from 'fastclick'
 
+import "vux/src/styles/reset.less";
+// import "@/assets/sass/style.scss";
+import  { ToastPlugin,ConfirmPlugin,AlertPlugin } from 'vux'
+
+//Vux 插件注册
+Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ToastPlugin)
+Vue.use(Vuex)
+Vue.use(router)
 
 Vue.config.productionTip = false
-const FastClick = require('fastclick')
 FastClick.attach(document.body)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
+
+  
