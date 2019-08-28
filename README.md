@@ -68,3 +68,6 @@ webpack
 # 工具函数 utils.js filter
 # 全局组件、全局函数toast
 # icon引入 全局样式变量
+在main.js中引入import './assets/icon/iconfont.css'，这样子就可以在vue项目中使用你下载的svg图标
+
+在vue中可以写<span class="icon iconfont icon-right"></span>就可以正常显示iconfont图标，修改的时候只需要修改icon-right这个class就可以了，这个class名称可以在font class中看到

@@ -1,5 +1,3 @@
-// import {queryUserInfo} from '../../services/header'
-// initial state
 //F5刷新会造成vux数据丢失，故而从缓存里拿
 const state = {
     userInfo: {}
@@ -21,9 +19,9 @@ const actions = {
 
 // mutations
 const mutations = {
-    // setUserInfo(state, userInfo) {
-    //     state.userInfo = userInfo
-    // }
+    setUserInfo(state, userInfo) {
+        state.userInfo = userInfo
+    }
 }
 
 export default {

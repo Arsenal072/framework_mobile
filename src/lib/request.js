@@ -31,10 +31,10 @@ const baseConfig = {
 // }
 
 const exportConfig = {
-    baseURL: BASE_URL,
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-    }
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json;charset=utf-8',
+  }
 };
 
 const requestGet = (_url, obj) => axios(_url, {...baseConfig, params: obj})
@@ -44,44 +44,44 @@ const requestPost = (_url, obj) => axios.post(_url, obj, exportConfig)
 // const uploadpost = (_url, obj) => axios.post(_url, obj, exportConfig);
 
 // 请求前拦截处理
-  axios.interceptors.request.use(config => {
-    let requestUrl = config.url;
-    let requestModel = '';
-    let randomStr = Math.random().toString(36).substr(2);
-    let timestamp = new Date().getTime();
+axios.interceptors.request.use(config => {
+  let requestUrl = config.url;
+  let requestModel = '';
+  let randomStr = Math.random().toString(36).substr(2);
+  let timestamp = new Date().getTime();
 
-    requestModel = utils.parseQueryString(decodeURIComponent(requestUrl).replace(/\+/g, ' '));
-    requestModel['noticeStr'] = randomStr;
-    requestModel['timestamp'] = timestamp;
-    let signStr = utils.createSignature(requestModel)
-    config.headers['noticeStr'] = randomStr;
-    config.headers['timestamp'] = timestamp;
-    config.headers['sign'] = signStr;
-    return config;
-  }, error => {
+  requestModel = utils.parseQueryString(decodeURIComponent(requestUrl).replace(/\+/g, ' '));
+  requestModel['noticeStr'] = randomStr;
+  requestModel['timestamp'] = timestamp;
+  let signStr = utils.createSignature(requestModel)
+  config.headers['noticeStr'] = randomStr;
+  config.headers['timestamp'] = timestamp;
+  config.headers['sign'] = signStr;
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+
+// 响应拦截错误处理
+axios.interceptors.response.use(res => {
+  return res;
+}, function (error) {
+  if (error === undefined || error.code === 'ECONNABORTED') {
+    utils.toast('服务请求超时')
     return Promise.reject(error);
-  });
-  
-  // 响应拦截错误处理
-  axios.interceptors.response.use(res => {
-    return res;
-  }, function(error) {
-    if (error === undefined || error.code === 'ECONNABORTED') {
-        utils.toast('服务请求超时')
-      return Promise.reject(error);
-    }
-    let response = error.response
-    if (response.status == 403) {
-        utils.toast(response.data)
-      return Promise.reject(error);
-    }
+  }
+  let response = error.response
+  if (response.status == 403) {
     utils.toast(response.data)
-    return error;
+    return Promise.reject(error);
+  }
+  utils.toast(response.data)
+  return error;
 });
 
 export {
-    requestGet,
-    requestPost,
+  requestGet,
+  requestPost,
 }
 // // 添加请求拦截器
 // axios.interceptors.request.use(function (config) {

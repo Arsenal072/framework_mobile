@@ -1,0 +1,25 @@
+@font-face {font-family: "iconfont";
+  src: url('iconfont.eot?t=1566978288001'); /* IE9 */
+  src: url('iconfont.eot?t=1566978288001#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAOsAAsAAAAAB7gAAANfAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDBgqDIIJzATYCJAMMCwgABCAFhG0HNhu5BlGU7Umd7GtMYYxPLWYzthkGNkJGOhtB4OLROMU+wE4L0VQV9p9wAR5EPHzt9zt3d99+zJtaJIpOJ4lGEo2hU0kQIplSKJlQPJPf/67pL7GdzDZbllUD5As0pdzL5QaO0O55RjnhAO0m5yZ000b7vUEYe8GlK3BxA0Ij//9hnX9vZNrl2RXsdHOEkiq+Va0Kpr6mrra+9se906ZNwPmAcvm7TWtMi7osjQMKaG9sC6UFkqC3DK91KRz0aQI9poRZjupaesCtIJMCccfZJLgzOqWhOHQJtWJlES8aXekpPQPPwffjTzLcJE1GZh7f1mKo+OQv23zLlUdDTGeBvI6MDaAQN5W2M7YotsGmx1Tbm7OrIqSpgsUT4Jay0j88kiAqUtgHVnA88QnHE01AXvVJGVT04hFvCGfM21XN6lAPhRU01pCHTK/TvunB/dhL/7sf/9vo+ncN7bWyYBaxW3/19BdLU5wyHCPsUKmjOYDuNOrtLOyM9pZg8XC4Xzt84lnnr/nB3VvUtnQn0hjPoLTxU8t8uzxv/tJpLYg/FHSWCiQQv41MzybY4Wh0gHAivd/rc0A0Cg4jQ/wWB2TKdP+jhzaNX+OWcBlej3wG42arPXdfknHkS1Jwv8xjxH/sK/Ed+zF94br2KN1JK7xDjOak59+LtXbb2lAnih3r8BqlWcEOkQgIYs4YEvayO9PQ62HSW5/7gEBt2pFOhrYHk1NefxMAbbZO216QkLdz1y/7jYf5PeOhrf+u3gI+7Bw8rQLd8kGXRGfiBxEdG4pFEX0uBs5xx5/t+wmWBKCKSYtdI36HO8ZBYgldCgGQdExC1mWBXtgb0Oi1CVWXXeixrn59r1GSTZRurFlBEIZcQzLgHbIhL/TC/oHGhH+ohsIGPU5idMdeS8G9h5JMKoLR1BzimihQZlTesLiLMDM3KdNUIOwj0uBBlIjG88l6UiByijnGNEsqRRGVIo/q0HkklxNIlyJDNBVNK6WnYjFa9aKoJvLgdUgiJikEhkyZg3AaoYB67RVv4fNdCMaUM0k21DVl+xCSgXePJETFO9Dr1YVOdbdyiWEak6QoFEJJQh5ShyxEjsYERK8elkFolKj0gIguJYab0a7q6PLa/PvtgB7ksBwpchT1Pi3MDLfdmwIAAA==') format('woff2'),
+  url('iconfont.woff?t=1566978288001') format('woff'),
+  url('iconfont.ttf?t=1566978288001') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('iconfont.svg?t=1566978288001#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shouji:before {
+  content: "\e6bd";
+}
+
+.icon-suo:before {
+  content: "\e620";
+}
+

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
+import store from '../store/index'
 
 Vue.use(Router)
 // 关闭loading
@@ -47,7 +48,9 @@ const router = new Router({
 
 //路由钩子
 router.beforeEach((to, from, next) => {
+    console.log('to.meta.requireAuth',to.meta.requireAuth)
     if(to.meta.requireAuth){
+        console.log('store.getters',store) 
         // 获取vuex用户登录信息
         NProgress.start()
         next({

@@ -9,6 +9,7 @@ import 'lib-flexible/flexible.js'
 import FastClick from 'fastclick'
 
 import "vux/src/styles/reset.less";
+import './assets/iconfont/iconfont.css'
 // import "@/assets/sass/style.scss";
 import  { ToastPlugin,ConfirmPlugin,AlertPlugin } from 'vux'
 
