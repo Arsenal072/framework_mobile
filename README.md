@@ -25,11 +25,7 @@ vue init webpack framework_mobile
 vue install
 # UI框架 vux安装 
 cnpm install vux --save
-# loader安装
-cnpm install stylus-loader css-loader style-loader less-loader sass-loader --save-dev
-cnpm install sass-loader --save
-cnpm install node-sass --save
-cnpm install less
+
 # error  in ./node_modules/_vux@2.9.4@vux/src/components/v-chart/mixin.js
 # vux2必须配合vux-loader使用, 在build/webpack.base.conf.js里参照如下代码进行配置：
 const vuxLoader = require('vux-loader')
@@ -38,6 +34,13 @@ const webpackConfig = module.exports
 module.exports = vuxLoader.merge(webpackConfig, {
   plugins: ['vux-ui']
 })
+
+# loader安装
+cnpm install stylus-loader css-loader style-loader less-loader sass-loader --save-dev
+cnpm install sass-loader --save
+cnpm install node-sass --save
+cnpm install less --save
+
 # flexible布局配置
 # 1、cnpm install px2rem-loader  lib-flexible --save
 # 2、在main.js中引入lib-flexible  
@@ -60,14 +63,15 @@ function generateLoaders (loader, loaderOptions) {
         })
     })
 }
+
 webpack 
 # 1、页面权限，登录=》获取该用户权限列表=》根据权限列表生成能够访问的菜单=》点击菜单，进入页面
 # 2、接口权限，到未登录页，拦截去登录页，登录后去目标页
 # axios请求封装 请求前拦截，请求后拦截
 # vuex
 # 工具函数 utils.js filter
-# 全局组件、全局函数toast
-# icon引入 全局样式变量
+# 全局函数toast、全局组件、全局过滤器
+# icon引入 全局样式变量 
 在main.js中引入import './assets/icon/iconfont.css'，这样子就可以在vue项目中使用你下载的svg图标
 
-在vue中可以写<span class="icon iconfont icon-right"></span>就可以正常显示iconfont图标，修改的时候只需要修改icon-right这个class就可以了，这个class名称可以在font class中看到
+在vue中可以写<span class="iconfont icon-right"></span>就可以正常显示iconfont图标，修改的时候只需要修改icon-right这个class就可以了，这个class名称可以在font class中看到

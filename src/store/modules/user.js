@@ -10,11 +10,11 @@ const getters = {
 
 // actions
 const actions = {
-    // async queryUserInfo({dispatch, commit}) {
-    //     commit('setUserInfo', {});
-    //     const data = await queryUserInfo();
-    //     commit('setUserInfo', data.data);
-    // }
+    queryUserInfo({dispatch, commit}, payload) {
+        commit('setUserInfo', payload);
+        // const data = await queryUserInfo();
+        // commit('setUserInfo', data.data);
+    }
 }
 
 // mutations

@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:28:05 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-08-28 17:41:17
+ * @Last Modified time: 2019-08-29 11:32:47
  */
 <!-- 登录页 -->
 <template>
@@ -27,7 +27,7 @@
 
 <script>
 import { Group, XInput, XButton } from "vux";
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 export default {
     name: "Login",
     components: { Group, XInput, XButton },
@@ -38,27 +38,32 @@ export default {
             password: ""
         };
     },
-    computed:{
-        ...mapGetters('user',['isLogined'])
+    computed: {
+        ...mapGetters("user", ["isLogined"])
     },
     methods: {
         // 去注册
-        registered(){
-            console.log('isLogined', this.isLogined)
+        registered() {
+            console.log("isLogined", this.isLogined);
         },
         // 去登陆
-        login(){
-            let userInfo = {
-                tel: this.tel,
-                password: this.password
-            }
-            this.$store.commit('user/setUserInfo', userInfo)
-            this.$router.push('/main')
+        login() {
+            this.$router.push({ path: "/main" });
+            // let userInfo = {
+            //     tel: this.tel,
+            //     password: this.password
+            // };
+            // this.$store
+            //     .dispatch("user/queryUserInfo", userInfo)
+            //     .then(() => {
+            //         this.$router.push({ path: "/main" });
+            //     })
+            //     .catch(error => {
+            //         alert(error);
+            //     });
         },
         //忘记密码
-        forgetPsw(){
-            
-        }
+        forgetPsw() {}
     }
 };
 </script>

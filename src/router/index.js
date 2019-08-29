@@ -9,29 +9,25 @@ Vue.use(Router)
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
 const router = new Router({
-    mode: 'hash',
+    // mode: 'hash',
     routes: [
                 {
-                    path: '/',
-                    redirect: '/login'
-                },
-                {
                   path: '/login',
-                  name: 'Login',
+                  name: 'login',
                   meta: {
                     title: '登录注册',
                     requireAuth: false
                   },
-                  component: (resolve)=> require(['../components/Login.vue'], resolve)
+                  component: () => import('../components/Login.vue')
                 },
                 {
                     path: '/main',
-                    name: 'Main',
+                    name: 'main',
                     meta: {
                         title: '首页',
                         requireAuth: true
                     },
-                    component: (resolve)=> require(['../views/Main.vue'], resolve)
+                    component: () => import('../views/Main.vue')
                 },                
                 {
                     path: '*',
@@ -40,24 +36,36 @@ const router = new Router({
                         title: '404',
                         requireAuth: false
                     },
-                    component: (resolve)=> require(['../views/NotFound.vue'], resolve)
-                }
+                    component: () => import('../views/NotFound.vue')
+                },
+                {
+                    path: '/',
+                    redirect: '/login'
+                },
             ]
 })
 
+const whiteList = ['/login', '*']
 
 //路由钩子
 router.beforeEach((to, from, next) => {
-    console.log('to.meta.requireAuth',to.meta.requireAuth)
+    NProgress.start()
+    // // 已登录
+    // if(Object.keys(store.getters.userInfo).length){
+    //     next()
+    // }else{
+    //     // 未登录 白名单
+    //     if(whiteList.indexOf(to.path)>-1){
+    //         next()
+    //     }else{
+    //         next(`/login?redirect=${to.path}`)
+    //     }
+    // }
     if(to.meta.requireAuth){
-        console.log('store.getters',store) 
-        // 获取vuex用户登录信息
-        NProgress.start()
         next({
-            name: 'Login'
+            path: '/login'
         })
-    }{
-        NProgress.start()
+    }else{
         next()
     }
     document.title = to.meta.title || ''
