@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 18:47:08 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-02 20:02:17
+ * @Last Modified time: 2019-09-03 16:24:12
  */
 <!--  -->
 <template>
@@ -34,7 +34,7 @@ export default {
 
     methods: {
         to(item){
-            this.$emit('nav',item.path)
+            this.$emit('nav',item)
         }
     }
 };
@@ -47,6 +47,7 @@ export default {
     display: flex;
     justify-content: space-around;
     background-color: #eee;
+    z-index: 10;
     .nav-box{
         font-size: 16px;
         text-align: center;

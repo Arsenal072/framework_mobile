@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 16:10:47 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-02 20:48:13
+ * @Last Modified time: 2019-09-03 16:18:59
  */
 <!--  -->
 <template>
@@ -14,7 +14,7 @@
         </div>
         <div class="center-input-box">
             <!-- <x-input placeholder="请输入症状/疾病/药品" :show-clear="false"></x-input> -->
-            <x-textarea placeholder="请输入症状/疾病/药品" :autosize="true" :rows="1" :max="78" :show-counter="false" v-model="inputText"></x-textarea>
+            <x-textarea placeholder="请输入症状/疾病/药品" :autosize="true" :rows="1" :max="30" :show-counter="false" v-model="inputText"></x-textarea>
         </div>
         <div class="right-box" @click="send">
             <span class="iconfont icon-fasong"></span>
@@ -86,6 +86,11 @@ export default {
             .weui-textarea {
                 width: 93%;
             }
+        }
+        textarea{
+            padding-top: 4px;
+            background-color: #eee;
+            height:30px!important;
         }
     }
     .right-box {

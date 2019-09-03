@@ -7,7 +7,6 @@
 <!--  -->
 <template>
     <div>
-        智能问病
     </div>
 </template>
 

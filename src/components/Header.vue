@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 14:07:51 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-02 20:09:37
+ * @Last Modified time: 2019-09-03 16:24:06
  */
 <!--  -->
 <template>
@@ -60,6 +60,7 @@ export default {
     width: 100%;
     height: 100px;
     background-color: #3978ff;
+    z-index: 10;
     .top-box {
         position: relative;
         img {
