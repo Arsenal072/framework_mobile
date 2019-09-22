@@ -1,0 +1,2 @@
+webpackJsonp([5],{O398:function(e,n){},hW2B:function(e,n,t){"use strict";Object.defineProperty(n,"__esModule",{value:!0});var r={render:function(){var e=this.$createElement;return(this._self._c||e)("div")},staticRenderFns:[]};var s=t("C7Lr")({name:"AskingDisease",components:{},data:function(){return{}},methods:{}},r,!1,function(e){t("O398")},"data-v-280e58f5",null);n.default=s.exports}});
+//# sourceMappingURL=5.b0312ace2d84fec14757.js.map

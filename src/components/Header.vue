@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 14:07:51 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-03 16:24:06
+ * @Last Modified time: 2019-09-22 16:44:55
  */
 <!--  -->
 <template>
@@ -15,9 +15,9 @@
                     <span class="iconfont icon-icon-qihuan"></span>
                 </div>
                 <div class="right-box">
-                    <popup-picker :data="genderOptions" v-model="gender"></popup-picker>
+                    <popup-picker :data="genderOptions" v-model="gender" @on-change="selectChange"></popup-picker>
                     <span>|</span>
-                    <popup-picker :data="ageOptions" v-model="age"></popup-picker>
+                    <popup-picker :data="ageOptions" v-model="age"  @on-change="selectChange"></popup-picker>
                 </div>
             </div>
         </div>
@@ -46,6 +46,13 @@ export default {
                 ageOptions.push(`${i}`);
             }
             this.ageOptions = [ageOptions]
+        },
+        selectChange(){
+            let params = {
+                age: this.age[0],
+                gender: this.gender[0]
+            }
+            this.$emit('selectChange',params)
         }
     },
     created() {

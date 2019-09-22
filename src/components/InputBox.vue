@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 16:10:47 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-03 16:18:59
+ * @Last Modified time: 2019-09-20 17:13:13
  */
 <!--  -->
 <template>
@@ -30,14 +30,14 @@ export default {
 
     data() {
         return {
-            inputText: ''
+            inputText: ""
         };
     },
 
     methods: {
-        send(){
-            this.$emit('send', this.inputText)
-            this.inputText = ''
+        send() {
+            this.$emit("send", this.inputText);
+            this.inputText = "";
         }
     }
 };
@@ -87,10 +87,10 @@ export default {
                 width: 93%;
             }
         }
-        textarea{
+        textarea {
             padding-top: 4px;
             background-color: #eee;
-            height:30px!important;
+            height: 30px !important;
         }
     }
     .right-box {

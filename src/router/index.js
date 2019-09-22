@@ -50,31 +50,31 @@ const router = new Router({
                             path: '/drugInquiry',
                             name: 'drugInquiry',
                             meta: {
-                                title: '智能问病',
+                                title: '药物查询',
                                 requireAuth: true
                             },
                             component: () => import('../views/DrugInquiry.vue'),
-                        },
-                        {
-                            path: '/feedback',
-                            name: 'feedback',
-                            meta: {
-                                title: '智能问病',
-                                requireAuth: true
-                            },
-                            component: () => import('../views/Feedback.vue'),
-                        },
+                        }
                     ]
-                },                
-                // {
-                //     path: '*',
-                //     name: '404',
-                //     meta: {
-                //         title: '404',
-                //         requireAuth: false
-                //     },
-                //     component: () => import('../views/NotFound.vue')
-                // },
+                },  
+                {
+                    path: '/feedback',
+                    name: 'feedback',
+                    meta: {
+                        title: '意见反馈',
+                        requireAuth: true
+                    },
+                    component: () => import('../views/Feedback.vue'),
+                },              
+                {
+                    path: '*',
+                    name: '404',
+                    meta: {
+                        title: '404',
+                        requireAuth: false
+                    },
+                    component: () => import('../views/NotFound.vue')
+                },
                 {
                     path: '/',
                     redirect: '/main'
@@ -87,7 +87,7 @@ const whiteList = ['/login', '*']
 //路由钩子
 router.beforeEach((to, from, next) => {
     NProgress.start()
-    // if(to.meta.requireAuth){
+    // if(to.meta.requireAuth==true){
     //     next({
     //         path: '/login'
     //     })
