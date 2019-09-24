@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-22 19:29:51
+ * @Last Modified time: 2019-09-24 11:22:14
  */
 <!-- 主页 -->
 <template>
@@ -20,68 +20,123 @@
 
                         <div v-if="item.type==1">
                             <div v-if="item.description=='diseaseList'">
-                                <span class="bubble-text">{{item.tip}}</span>
+                                <span class="bubble-text bold">{{item.tip}}</span>
                                 <div v-for="(i ,j) in item.result" :key="j">
                                     <p @click="_getDiseaseDetail(i.id)" class="min-title">{{i.name}}</p>
                                 </div>
                             </div>
                             <div v-else>
                                 <p class="bubble-title">{{item.name}}</p>
-                                <p class="min-title">概述</p>
+                                <p class="min-title bold">概述</p>
                                 <p v-html="item.introduction"></p>
-                                <p class="min-title">病因描述</p>
+                                <p class="min-title bold">病因描述</p>
                                 <p>{{item.reasonDescription}}</p>
-                                <p class="min-title">症状描述</p>
+                                <p class="min-title bold">症状描述</p>
                                 <p>{{item.symptomDescription}}</p>
-                                <p class="recommendedDepartment">小U推荐您去
+                                <p class="min-title bold">推荐科室</p>
+                                <div v-if="item.deptId">
+                                    <p class="recommendedDepartment">小U推荐您去本院
+                                        <span class="min-title">{{item.className}}</span>
+                                        挂号
+                                    </p>
+                                    <div class="dept">
+                                        <span>{{item.className}}</span>
+                                        <span class="blue">挂号 ></span>
+                                    </div>
+                                </div>
+                                <p class="recommendedDepartment" v-if="!item.deptId">小U推荐您去
                                     <span class="min-title">{{item.className}}</span>
-                                    挂号
+                                    挂号，但本院没有开设这个科室
                                 </p>
+                                <p v-if="item.deptId" class="min-title bold">推荐医生</p>
+                                <div v-if="item.deptId&&item.respArr.length" class="dorctor-list">
+                                    <div v-for="(i,j) in item.respArr" :key="j" class="doctor-item">
+                                        <div>
+                                            <img :src="i.photo" alt="">
+                                        </div>
+                                        <div>
+                                            <span>{{i.name}}</span>
+                                            <span>{{i.position}}</span>
+                                        </div>
+                                        <div class="blue">
+                                            挂号 >
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div v-if="item.type==2">
                             <div v-if="item.description=='medicineList'">
-                                <span class="bubble-text">{{item.tip}}</span>
-                                <div v-for="(i ,j) in item.result" :key="j">
+                                <span class="bubble-text bold">{{item.tip}}</span>
+                                <div v-for="(i ,j) in item.arr" :key="j">
                                     <p @click="_getMedicineDetail(i.id)" class="min-title">{{i.name}}</p>
                                 </div>
                             </div>
                             <div v-if="item.description=='medicineDetail'">
                                 <p class="bubble-title">{{item.showName}}</p>
-                                <p class="min-title">药物名称：<span class="medicine-name">{{item.commonName}}</span></p>
-                                <p class="min-title">剂量</p>
+                                <p class="min-title bold">药物名称：<span class="medicine-name">{{item.commonName}}</span></p>
+                                <p class="min-title bold">剂量</p>
                                 <p v-html="item.dosage"></p>
-                                <p class="min-title">用法</p>
+                                <p class="min-title bold">用法</p>
                                 <p>{{item.indication}}</p>
                             </div>
                         </div>
                         <div v-if="item.type!=1&&item.type!=2">
-                            <p class="bubble-text">{{item.tip}}</p>
-                            <div v-if="item.description=='bodyList'">
-                                <div v-for="(i,j) in item.bodyList" :key="j" class="body-item">
-                                    <span @click="_getSymptomList(i.id)" class="min-title">{{i.name}}</span>
-                                    <span v-if="j==item.bodyList.length&&item.pageCount!=pageCount" class="min-title" @click="nextPage(pageCount+1)">下一页</span>
-                                    <!-- <p @click="_getSymptomList(i.id)" class="min-title">{{i.name}}</p> -->
+                            <div v-if="item.type==3">
+                                <p class="bubble-text bold">{{item.tip}}</p>
+                                <div v-if="item.description=='bodyList'">
+                                    <div v-for="(i,j) in item.bodyList" :key="j" class="body-item">
+                                        <span @click="_getSymptomList(i.id)" class="min-title">{{i.name}}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div v-if="item.description=='SymptomList'">
+                                <p class="bubble-text bold">{{item.tip}}</p>
                                 <div v-for="(i,j) in item.arr" :key="j">
                                     <span @click="_getCompanySymptom(i.id)" class="min-title">{{i.symptom}}</span>
                                 </div>
                             </div>
                             <div v-if="item.description=='acompanySymptom'">
+                                <p class="bubble-text bold">{{item.tip}}</p>
                                 <div v-for="(i,j) in item.arr" :key="j">
                                     <span @click="_getDisease(i.id)" class="min-title">{{i.content}}</span>
                                 </div>
                             </div>
                             <div v-if="item.description=='diseaseList'">
+                                <p class="bubble-text bold">{{item.tip}}</p>
                                 <div v-for="(i,j) in item.list" :key="j">
                                     <span class="min-title">{{i.name}}</span>
                                 </div>
-                                <p class="recommendedDepartment">小U推荐您去
+                                <p class="min-title bold">推荐科室</p>
+                                <div v-if="item.deptId">
+                                    <p class="recommendedDepartment">小U推荐您去本院
+                                        <span class="min-title">{{item.className}}</span>
+                                        挂号
+                                    </p>
+                                    <p class="dept">
+                                        <span>{{item.className}}</span>
+                                        <span class="blue">挂号 ></span>
+                                    </p>
+                                </div>
+                                <p class="recommendedDepartment" v-if="!item.deptId">小U推荐您去
                                     <span class="min-title">{{item.className}}</span>
-                                    挂号
+                                    挂号，但本院没有开设这个科室
                                 </p>
+                                <p v-if="item.deptId" class="min-title bold">推荐医生</p>
+                                <div v-if="item.deptId&&item.respArr.length" class="dorctor-list">
+                                    <div v-for="(i,j) in item.respArr" :key="j" class="doctor-item">
+                                        <div>
+                                            <img :src="i.photo" alt="">
+                                        </div>
+                                        <div>
+                                            <span>{{i.name}}</span>
+                                            <span>{{i.position}}</span>
+                                        </div>
+                                        <div class="blue">
+                                            挂号 >
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -109,7 +164,9 @@ import {
     queryDiseaseDetail,
     queryDisease,
     queryMedicineList,
-    queryMedicineDetail
+    queryMedicineDetail,
+    queryDeptName,
+    queryDoctorList
 } from "../service/index";
 export default {
     name: "Main",
@@ -149,7 +206,9 @@ export default {
             gender: "男",
             pageCount: 1,
             symptomId: "",
-            inputText: ""
+            inputText: "",
+            offsetTop: 0,
+            wechatConfigToken: "795ce1e2-c86a-48cf-8e0b-6155dba93b40"
         };
     },
 
@@ -164,10 +223,11 @@ export default {
             this.navItem = item;
             if (item.type != "意见反馈") {
                 // this.arr = [];
-                this.$router.push(item.path);
+                // this.$router.push(item.path);
                 this._response(item, "");
             } else {
-                this.$router.push("/feedback");
+                window.location.href =
+                    "http://res.zwjk.com/h5-test/open-application-front/prod/#/feedbackTypes?type=1&router=feedbackTypes&hospitalId=08adfbab-06f6-48df-9d3c-ed76e81bcb01&wechatConfigToken=f78c6ace-9942-4051-9d90-0c9ccab9f754&projectid=4933a927-fae0-4a77-8ead-dadf678af195&applicationId=3a385635-a88a-41a3-9ef7-a1254d1bg564";
             }
         },
         // 发送
@@ -179,10 +239,8 @@ export default {
                     icon: "icon-tubiao_guke",
                     content: inputText
                 });
+                this.getHeight();
                 this._getQueryType(inputText);
-                // this._response("", inputText);
-                // let ele = document.getElementsByClassName("bubble-box");
-                // ele.scrollTop = ele.scrollHeight;
             }
         },
         // 自动应答
@@ -193,15 +251,16 @@ export default {
                 icon: "icon-customer",
                 content: obj
             });
-        },
-        // 点击聊天，跳转
-        learnMore(i) {
-            // this._response("", i);
-            this.$router.push(i.path);
+            this.getHeight();
         },
         // 询问类型
         _getQueryType(inputText) {
-            queryType({ inputContent: inputText }).then(res => {
+            let params = {
+                inputContent: inputText,
+                age: this.age,
+                gender: this.gender == "男" ? "M" : "F"
+            };
+            queryType(params).then(res => {
                 if (res.data.type == 1) {
                     this.arr.push(
                         Object.assign(res.data, {
@@ -211,55 +270,104 @@ export default {
                             description: "diseaseList"
                         })
                     );
+                    this.getHeight();
                 } else if (res.data.type == 2) {
                     this._getMedicineList().then(res => {
+                        let arr = res.data.result.filter((item,index)=>{
+                            return index<20
+                        })
                         this.arr.push(
-                            Object.assign(res.data, {
+                            Object.assign({ arr }, {
                                 source: "U",
                                 icon: "icon-customer",
                                 tip: "您是否查找以下药物？",
-                                description: "medicineList"
+                                description: "medicineList",
+                                type: 2
                             })
                         );
+                        this.getHeight();
                     });
-                }
-                // else if (res.data.type == 3) {
-                //     this.arr.push(
-                //         Object.assign(rea.data, {
-                //             source: "U",
-                //             icon: "icon-customer",
-                //             tip: "您是否患有以下症状？"
-                //         })
-                //     );}
-                else {
-                    this._getBodyList(this.pageCount).then(res => {
+                } else if(res.data.type == 3) {
+                    this._getBodyList().then(res => {
                         this.arr.push(
                             Object.assign(res.data, {
                                 source: "U",
                                 icon: "icon-customer",
                                 tip: "您身体哪个部位不舒服?",
-                                description: "bodyList"
+                                description: "bodyList",
+                                type: 3
                             })
                         );
+                        this.getHeight();
                     });
-                }
+                }else if (res.data.type == 4) {
+                    let arr = res.data.result.bodySymptomList.filter(item => {
+                        return item.haveQuestion == 1;
+                    });
+                    this.arr.push(
+                        Object.assign(
+                            { arr },
+                            {
+                                source: "U",
+                                icon: "icon-customer",
+                                tip: "您是否患有以下症状？",
+                                description: "SymptomList"
+                            }
+                        )
+                    );
+                    this.getHeight();
+                } 
             });
         },
+        // 疾病详情
         _getDiseaseDetail(diseaseId) {
             queryDiseaseDetail({ diseaseId: diseaseId }).then(res => {
-                this.arr.push(
-                    Object.assign(res.data, {
-                        source: "U",
-                        icon: "icon-customer",
-                        description: "diseaseDetail",
-                        type: 1
-                    })
-                );
+                // 获取T对应科室
+                queryDeptName({
+                    deptName: res.data.className,
+                    wechatConfigToken: this.wechatConfigToken
+                }).then(response => {
+                    if (Object.keys(response.data).length) {
+                        res.data.className = response.data.name;
+                        this.$set(res.data, "deptId", response.data.id);
+                        // 获取医生列表
+                        queryDoctorList({
+                            deptId: response.data.id,
+                            wechatConfigToken: this.wechatConfigToken
+                        }).then(resp => {
+                            let respArr = resp.data;
+                            this.arr.push(
+                                Object.assign(
+                                    res.data,
+                                    { respArr },
+                                    {
+                                        source: "U",
+                                        icon: "icon-customer",
+                                        description: "diseaseDetail",
+                                        type: 1
+                                    }
+                                )
+                            );
+                            this.getHeight();
+                        });
+                    } else {
+                        this.arr.push(
+                            Object.assign(res.data, {
+                                source: "U",
+                                icon: "icon-customer",
+                                description: "diseaseDetail",
+                                type: 1
+                            })
+                        );
+                        this.getHeight();
+                    }
+                });
             });
         },
-        _getBodyList(pageCount) {
+        // 身体部位
+        _getBodyList() {
             let params = {
-                pageNum: pageCount,
+                pageNum: 1,
                 pageSize: 20
             };
             return new Promise((resolve, reject) => {
@@ -268,22 +376,11 @@ export default {
                 });
             });
         },
-        nextPage(pageCount) {
-            this._getBodyList(pageCount).then(res => {
-                this.arr.push(
-                    Object.assign(res.data, {
-                        source: "U",
-                        icon: "icon-customer",
-                        tip: "您身体哪个部位不舒服?",
-                        description: "bodyList"
-                    })
-                );
-            });
-        },
+        // 症状列表
         _getSymptomList(id) {
             let params = {
-                pageNum: this.pageCount,
-                pageSize: 10,
+                pageNum: 1,
+                pageSize: 50,
                 age: this.age,
                 gender: this.gender == "男" ? "M" : "F",
                 bodyId: id
@@ -303,8 +400,10 @@ export default {
                         }
                     )
                 );
+                this.getHeight();
             });
         },
+        // 伴随症状
         _getCompanySymptom(id) {
             this.symptomId = id;
             let params = {
@@ -333,6 +432,7 @@ export default {
                         }
                     )
                 );
+                this.getHeight();
             });
         },
         // 获取疾病列表
@@ -344,14 +444,45 @@ export default {
                 optionId: id
             };
             queryDisease(params).then(res => {
-                this.arr.push(
-                    Object.assign(res.data, {
-                        source: "U",
-                        icon: "icon-customer",
-                        tip: "您可能患有以下疾病",
-                        description: "diseaseList"
-                    })
-                );
+                queryDeptName({
+                    deptName: res.data.className,
+                    wechatConfigToken: this.wechatConfigToken
+                }).then(response => {
+                    if (Object.keys(response.data).length) {
+                        res.data.className = response.data.name;
+                        this.$set(res.data, "deptId", response.data.id);
+                        // 获取医生列表
+                        queryDoctorList({
+                            deptId: response.data.id,
+                            wechatConfigToken: this.wechatConfigToken
+                        }).then(resp => {
+                            let respArr = resp.data;
+                            this.arr.push(
+                                Object.assign(
+                                    res.data,
+                                    { respArr },
+                                    {
+                                        source: "U",
+                                        icon: "icon-customer",
+                                        tip: "您可能患有以下疾病",
+                                        description: "diseaseList"
+                                    }
+                                )
+                            );
+                            this.getHeight();
+                        });
+                    } else {
+                        this.arr.push(
+                            Object.assign(res.data, {
+                                source: "U",
+                                icon: "icon-customer",
+                                tip: "您可能患有以下疾病",
+                                description: "diseaseList"
+                            })
+                        );
+                        this.getHeight();
+                    }
+                });
             });
         },
         // 问药
@@ -379,6 +510,18 @@ export default {
                         type: 2
                     })
                 );
+                this.getHeight();
+            });
+        },
+        // 获取高度
+        getHeight() {
+            let arr = document.getElementsByClassName("left-bubble");
+            let height = arr[arr.length - 1].offsetTop;
+            this.offsetTop = this.offsetTop + height;
+            let top = this.offsetTop ? this.offsetTop : height;
+            window.scrollTo({
+                top: top - height,
+                behavior: "smooth"
             });
         }
     },
@@ -414,7 +557,7 @@ export default {
                 width: 73%;
                 background: #fff;
                 color: #333;
-                border: 1px solid #3978ff;
+                border: 1px solid #333;
                 font-size: 16px;
                 padding: 8px;
                 -moz-border-radius: 12px;
@@ -442,11 +585,42 @@ export default {
                         margin-top: 0px;
                     }
                 }
-                .medicine-name{
+                .bold {
+                    color: #333;
+                    font-weight: bold;
+                }
+                .blue {
+                    color: #3978ff;
+                }
+                .dept {
+                    border: 1px solid #333;
+                    margin-top: 10px;
+                    padding: 10px 20px 10px;
+                    border-radius: 5px;
+                    .blue {
+                        float: right;
+                    }
+                }
+                .medicine-name {
                     color: #333;
                 }
                 .recommendedDepartment {
                     padding-top: 10px;
+                }
+                .doctor-item {
+                    display: flex;
+                    justify-content: space-around;
+                    border: 1px solid #333;
+                    margin-bottom: 10px;
+                    border-radius: 5px;
+                    align-items: center;
+                    img {
+                        padding-top: 5px;
+                        width: 40px;
+                    }
+                    &:first-child {
+                        margin-top: 10px;
+                    }
                 }
             }
         }
@@ -478,7 +652,7 @@ export default {
     }
     .input-box {
         z-index: 10;
-        background-color: #eee;
+        background-color: #fff;
     }
 }
 </style>

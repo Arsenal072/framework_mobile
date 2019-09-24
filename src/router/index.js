@@ -77,7 +77,7 @@ const router = new Router({
                 },
                 {
                     path: '/',
-                    redirect: '/main'
+                    redirect: '/guidance'
                 },
             ]
 })

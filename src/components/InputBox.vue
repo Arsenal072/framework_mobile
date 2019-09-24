@@ -2,12 +2,12 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 16:10:47 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-20 17:13:13
+ * @Last Modified time: 2019-09-24 12:32:25
  */
 <!--  -->
 <template>
     <div class="input-box-wrapper">
-        <div class="left-box">
+        <div class="left-box" @click="yuyin">
             <div class="inner-box">
                 <span class="iconfont icon-yuyin"></span>
             </div>
@@ -24,6 +24,7 @@
 
 <script>
 import { XInput, XTextarea } from "vux";
+import { toast } from '../lib/utils'
 export default {
     name: "InputBox",
     components: { XInput, XTextarea },
@@ -35,6 +36,9 @@ export default {
     },
 
     methods: {
+        yuyin(){
+            toast('语音输入功能正在开发中，敬请期待！')
+        },
         send() {
             this.$emit("send", this.inputText);
             this.inputText = "";
@@ -49,7 +53,7 @@ export default {
     align-items: flex-end;
     bottom: 0px;
     width: 100%;
-    padding: 15px 10px 10px 15px;
+    padding: 15px 10px 15px 15px;
     border-top: 1px solid #eee;
     .left-box {
         // width: 40px;
@@ -80,16 +84,17 @@ export default {
             width: 100%;
             display: inline-block;
             padding: 0px;
-            padding-left: 10px;
+            padding-left: 6px;
         }
         .vux-x-textarea {
             .weui-textarea {
-                width: 93%;
+                width: 95%;
+                // border-bottom: 1px solid #3978ff;
             }
         }
         textarea {
             padding-top: 4px;
-            background-color: #eee;
+            background-color: none;
             height: 30px !important;
         }
     }

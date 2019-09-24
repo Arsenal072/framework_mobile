@@ -1,8 +1,8 @@
 import axios from 'axios';
-const http = 'http://192.168.1.46:8080'
+const http = 'https://lrwback.zwjk.com'
 // 用户询问类型
 export function queryType(params){
-    return axios.get(http + '/userQuestion?describe=' + params.inputContent)
+    return axios.get(http + '/userQuestion?describe=' + params.inputContent + '&age=' + params.age + '&sex=' + params.gender)
 }
 // 部位
 export function queryCheckBodyList(params){
@@ -31,4 +31,12 @@ export function queryMedicineList(params){
 // 药详情
 export function queryMedicineDetail(params){
     return axios.get(http + '/queryDrugDetail?id=' + params.medicineId)
+}
+// T对应科室
+export function queryDeptName(params){
+    return axios.get(http + '/queryDept?deptName=' + params.deptName + '&wechatConfigToken=' + params.wechatConfigToken)
+}
+// 科室医生
+export function queryDoctorList(params){
+    return axios.get(http + '/queryDoctor?deptId=' + params.deptId + '&wechatConfigToken=' + params.wechatConfigToken)
 }

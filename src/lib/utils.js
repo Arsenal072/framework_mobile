@@ -1,6 +1,7 @@
 import { formatDate } from '../filter/index';
 import _ from 'lodash';
 import * as md5 from './md5';
+import Vue from 'vue'
 
 const utils = {}
 utils.isNotEmpty = (obj => {
@@ -11,7 +12,7 @@ utils.isNotEmpty = (obj => {
 });
 
 //toast提示
-utils.toast = (msg) => {
+export function toast(msg) {
     new Vue().$vux.toast.show({
         text: msg,
         position: 'middle',

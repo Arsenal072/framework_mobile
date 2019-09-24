@@ -7,6 +7,7 @@ import store from './store/index'
 import Vuex from 'vuex'
 import 'lib-flexible/flexible.js'
 import FastClick from 'fastclick'
+import 'jquery'
 
 import "vux/src/styles/reset.less";
 import './assets/iconfont/iconfont.css'
