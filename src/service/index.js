@@ -40,3 +40,9 @@ export function queryDeptName(params){
 export function queryDoctorList(params){
     return axios.get(http + '/queryDoctor?deptId=' + params.deptId + '&wechatConfigToken=' + params.wechatConfigToken)
 }
+
+
+// 问诊： 疾病、症状、药物
+export function inquiry(params){
+    return axios.get(http + '/questionDiagnose?question=' + params.inputText+ '&wechatConfigToken=' + params.wechatConfigToken)
+}

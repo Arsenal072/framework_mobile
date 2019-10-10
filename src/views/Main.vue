@@ -2,19 +2,19 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-24 11:22:14
+ * @Last Modified time: 2019-10-10 11:10:49
  */
 <!-- 主页 -->
 <template>
     <div class="main-wrapper">
-        <Header @selectChange="ageChange"></Header>
+        <Header @selectChange="ageChange" :genderAndAge="genderAndAge"></Header>
         <Nav @nav="nav" :navList="navList"></Nav>
         <input-box @send='send' class="input-box"></input-box>
         <router-view class="nav-model"></router-view>
         <div class="bubble-box">
             <div v-for="(item, index) in arr" :key="index">
                 <div v-if="item.source=='U'" class="left-box">
-                    <span :class="['iconfont',`${item.icon}`]"></span>
+                    <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                     <div class="left-bubble">
                         <span class="bubble-text" v-if='item.content&&item.content.text'>{{item.content.text}}</span>
 
@@ -84,7 +84,7 @@
                         <div v-if="item.type!=1&&item.type!=2">
                             <div v-if="item.type==3">
                                 <p class="bubble-text bold">{{item.tip}}</p>
-                                <div v-if="item.description=='bodyList'">
+                                <div v-if="item.description=='bodyList'" class="bodyList">
                                     <div v-for="(i,j) in item.bodyList" :key="j" class="body-item">
                                         <span @click="_getSymptomList(i.id)" class="min-title">{{i.name}}</span>
                                     </div>
@@ -143,7 +143,7 @@
                 </div>
                 <div v-else class="right-box">
                     <div class="right-bubble">{{item.content}}</div>
-                    <span :class="['iconfont',`${item.icon}`]"></span>
+                    <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                 </div>
             </div>
         </div>
@@ -166,11 +166,13 @@ import {
     queryMedicineList,
     queryMedicineDetail,
     queryDeptName,
-    queryDoctorList
+    queryDoctorList,
+    inquiry
 } from "../service/index";
+import { Button } from "vant";
 export default {
     name: "Main",
-    components: { Header, InputBox, Nav },
+    components: { Header, InputBox, Nav, [Button.name]: Button },
 
     data() {
         return {
@@ -208,21 +210,24 @@ export default {
             symptomId: "",
             inputText: "",
             offsetTop: 0,
-            wechatConfigToken: "795ce1e2-c86a-48cf-8e0b-6155dba93b40"
+            wechatConfigToken: "795ce1e2-c86a-48cf-8e0b-6155dba93b40",
+            genderAndAge: {
+                age: 24,
+                gender: "男"
+            }
         };
     },
 
     methods: {
         // 年龄性别变更
         ageChange(params) {
-            this.age = params.age;
-            this.gender = params.gender;
+            this.genderAndAge.age = params.age;
+            this.genderAndAge.gender = params.gender;
         },
         // 头部导航
         nav(item) {
             this.navItem = item;
             if (item.type != "意见反馈") {
-                // this.arr = [];
                 // this.$router.push(item.path);
                 this._response(item, "");
             } else {
@@ -230,7 +235,7 @@ export default {
                     "http://res.zwjk.com/h5-test/open-application-front/prod/#/feedbackTypes?type=1&router=feedbackTypes&hospitalId=08adfbab-06f6-48df-9d3c-ed76e81bcb01&wechatConfigToken=f78c6ace-9942-4051-9d90-0c9ccab9f754&projectid=4933a927-fae0-4a77-8ead-dadf678af195&applicationId=3a385635-a88a-41a3-9ef7-a1254d1bg564";
             }
         },
-        // 发送
+        // 输入文本发送
         send(inputText) {
             this.inputText = inputText;
             if (inputText != "") {
@@ -240,6 +245,7 @@ export default {
                     content: inputText
                 });
                 this.getHeight();
+                // this._getInquryType(inputText)
                 this._getQueryType(inputText);
             }
         },
@@ -252,6 +258,17 @@ export default {
                 content: obj
             });
             this.getHeight();
+        },
+        // 问诊类型
+        _getInquryType(inputValue){
+            let params = {
+                inputText: inputValue,
+                wechatConfigToken: 1
+                // localStorage.getItem("wechatConfigToken")?localStorage.getItem("wechatConfigToken"):1
+            }
+            inquiry(params).then(res=>{
+
+            })
         },
         // 询问类型
         _getQueryType(inputText) {
@@ -273,21 +290,24 @@ export default {
                     this.getHeight();
                 } else if (res.data.type == 2) {
                     this._getMedicineList().then(res => {
-                        let arr = res.data.result.filter((item,index)=>{
-                            return index<20
-                        })
+                        let arr = res.data.result.filter((item, index) => {
+                            return index < 20;
+                        });
                         this.arr.push(
-                            Object.assign({ arr }, {
-                                source: "U",
-                                icon: "icon-customer",
-                                tip: "您是否查找以下药物？",
-                                description: "medicineList",
-                                type: 2
-                            })
+                            Object.assign(
+                                { arr },
+                                {
+                                    source: "U",
+                                    icon: "icon-customer",
+                                    tip: "您是否查找以下药物？",
+                                    description: "medicineList",
+                                    type: 2
+                                }
+                            )
                         );
                         this.getHeight();
                     });
-                } else if(res.data.type == 3) {
+                } else if (res.data.type == 3) {
                     this._getBodyList().then(res => {
                         this.arr.push(
                             Object.assign(res.data, {
@@ -300,7 +320,7 @@ export default {
                         );
                         this.getHeight();
                     });
-                }else if (res.data.type == 4) {
+                } else if (res.data.type == 4) {
                     let arr = res.data.result.bodySymptomList.filter(item => {
                         return item.haveQuestion == 1;
                     });
@@ -316,7 +336,7 @@ export default {
                         )
                     );
                     this.getHeight();
-                } 
+                }
             });
         },
         // 疾病详情
@@ -516,17 +536,25 @@ export default {
         // 获取高度
         getHeight() {
             let arr = document.getElementsByClassName("left-bubble");
-            let height = arr[arr.length - 1].offsetTop;
-            this.offsetTop = this.offsetTop + height;
-            let top = this.offsetTop ? this.offsetTop : height;
-            window.scrollTo({
-                top: top - height,
-                behavior: "smooth"
-            });
+            if(arr.length>0){
+                let height = arr[arr.length - 1].offsetTop;
+                this.offsetTop = this.offsetTop + height;
+                let top = this.offsetTop ? this.offsetTop : height;
+                window.scrollTo({
+                    top: top - height,
+                    behavior: "smooth"
+                });
+            }
         }
     },
     created() {
         this.nav(this.navList[0]);
+        if (!localStorage.getItem("wechatConfigToken")) {
+            localStorage.setItem(
+                "wechatConfigToken",
+                this.$route.query.wechatConfigToken
+            );
+        }
     }
 };
 </script>
@@ -534,13 +562,14 @@ export default {
 .main-wrapper {
     width: 100%;
     .nav-model {
-        margin-top: 180px;
+        padding-top: 180px;
     }
     .bubble-box {
         padding-bottom: 70px;
         z-index: 5;
         .left-box {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            margin-left: 20px;
             display: flex;
             align-items: flex-end;
             .iconfont {
@@ -553,25 +582,39 @@ export default {
             .left-bubble {
                 display: inline-block;
                 position: relative;
-                left: 5px;
-                width: 73%;
+                // left: 5px;
+                width: 90%;
                 background: #fff;
                 color: #333;
-                border: 1px solid #333;
+                // border: 1px solid #333;
                 font-size: 16px;
                 padding: 8px;
                 -moz-border-radius: 12px;
                 -webkit-border-radius: 12px;
                 border-radius: 12px;
+                &::after {
+                    content: "";
+                    border: 8px solid #ffffff00;
+                    border-right: 8px solid #fff;
+                    position: absolute;
+                    top: 20px;
+                    left: -16px;
+                }
                 .bubble-text {
                     color: #333;
                 }
-                .body-item {
-                    display: inline-block;
-                    border: 1px solid #3978ff;
-                    border-radius: 3px;
-                    padding: 0 10px;
-                    margin: 5px 5px;
+                .bodyList {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    .body-item {
+                        display: inline-block;
+                        border: 1px solid #3978ff;
+                        border-radius: 10px;
+                        padding: 0 10px;
+                        margin: 5px 0px;
+                    }
                 }
                 .bubble-title {
                     font-weight: bold;
@@ -628,10 +671,12 @@ export default {
             display: flex;
             justify-content: flex-end;
             align-items: flex-end;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+            margin-right: 20px;
+            position: relative;
             .right-bubble {
                 display: inline-block;
-                max-width: 74%;
+                max-width: 90%;
                 background: #3978ff;
                 color: #fff;
                 font-size: 16px;
@@ -639,6 +684,15 @@ export default {
                 -moz-border-radius: 12px;
                 -webkit-border-radius: 12px;
                 border-radius: 12px;
+                &::after {
+                    content: "";
+                    border: 8px solid #ffffff00;
+                    border-left: 8px solid #3978ff;
+                    position: absolute;
+                    top: 15px;
+                    right: -16px;
+                    // background-color: #3978ff;
+                }
             }
             .iconfont {
                 padding-right: 5px;

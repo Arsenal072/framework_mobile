@@ -75,3 +75,33 @@ webpack
 在main.js中引入import './assets/icon/iconfont.css'，这样子就可以在vue项目中使用你下载的svg图标
 
 在vue中可以写<span class="iconfont icon-right"></span>就可以正常显示iconfont图标，修改的时候只需要修改icon-right这个class就可以了，这个class名称可以在font class中看到
+
+#vant引入
+npm i vant -S
+#自动按需引入组件 (推荐)
+babel-plugin-import 是一款 babel 插件，它会在编译过程中将 import 的写法自动转换为按需引入的方式
+npm i babel-plugin-import -D
+// 在.babelrc 中添加配置
+{
+  "plugins": ["transform-vue-jsx", "transform-runtime",
+    ["import", {
+      "libraryName": "vant",
+      "libraryDirectory": "es",
+      "style": true
+    }]
+  ]
+}
+组件中引入
+import { Swipe,SwipeItem,Button } from "vant"
+    export default {
+      components:{
+         [Button.name]:Button,
+         [Swipe.name]:Swipe,
+         [SwipeItem.name]:SwipeItem
+      },
+        data () {
+            return {
+            }
+        },
+        methods: {}
+    }

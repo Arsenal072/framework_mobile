@@ -2,16 +2,14 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 18:47:08 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-24 10:52:27
+ * @Last Modified time: 2019-10-10 10:56:29
  */
 <!--  -->
 <template>
     <div class="nav-wrapper">
-        <div class="nav-box" v-for="(item, index) in navList" :key="index" @click="to(item)">
-            <!-- <div :class="selectItem==index?'select':''"> -->
-                <span :class="['iconfont', `${item.icon}`]"></span>
+        <div :class="['nav-box',selectItem==index?'select':'']" v-for="(item, index) in navList" :key="index" @click="to(item)">
+                <span :class="['iconfont', `${item.icon}`, selectItem==index?'selectIcon':'']"></span>
                 <p>{{item.type}}</p>
-            <!-- </div> -->
         </div>
     </div>
 </template>
@@ -46,11 +44,11 @@ export default {
     width: 100%;
     position: fixed;
     top: 100px;
-    display: flex;
-    justify-content: space-around;
-    background-color: #eee;
+    background-color: #fff;
     z-index: 10;
     .nav-box {
+        display: inline-block;
+        width: 25%;
         font-size: 16px;
         text-align: center;
         .iconfont {
@@ -59,7 +57,11 @@ export default {
         }
     }
     .select {
-        background-color: orange;
+        background-color: #3978ff;
+        color: #fff;
+    }
+    .selectIcon{
+        color: #fff!important;
     }
 }
 </style>

@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 14:07:51 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-09-22 16:44:55
+ * @Last Modified time: 2019-10-10 10:47:04
  */
 <!--  -->
 <template>
@@ -10,53 +10,76 @@
         <div class="top-box">
             <img src="../assets/images/u_baby.png" alt="">
             <div class="select-box">
-                <div class="left-box">
-                    <span>切换</span>
-                    <span class="iconfont icon-icon-qihuan"></span>
-                </div>
-                <div class="right-box">
-                    <popup-picker :data="genderOptions" v-model="gender" @on-change="selectChange"></popup-picker>
-                    <span>|</span>
-                    <popup-picker :data="ageOptions" v-model="age"  @on-change="selectChange"></popup-picker>
-                </div>
+                <van-cell is-link @click="showPopup">
+                    <div class="left-box">
+                        <span>切换</span>
+                        <span class="iconfont icon-icon-qihuan"></span>
+                        <div class="right-box">
+                            <span class="select-gender">{{genderAndAge.gender}}</span>
+                            <span class="line">|</span>
+                            <span class="select-age">{{genderAndAge.age}}</span>
+                        </div>
+
+                    </div>
+                </van-cell>
+                <van-popup v-model="showPicker" position="bottom" :style="{ height: '45%' }" @close="showPicker = false">
+                    <van-picker show-toolbar default="標題" :columns="columns" @change="onChange" @cancel="showPicker = false" @confirm="showPicker = false" />
+                </van-popup>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { PopupRadio, PopupPicker } from "vux"
+import { Popup, Picker, Cell } from "vant";
+import { getAgeArr } from "../lib/enums";
+const ageArr = getAgeArr();
+const ages = {
+    男: ageArr,
+    女: ageArr
+};
 export default {
     name: "Header",
-    components: { PopupRadio, PopupPicker },
-
+    components: {
+        [Picker.name]: Picker,
+        [Popup.name]: Popup,
+        [Cell.name]: Cell
+    },
+    props: {
+        genderAndAge: {
+            type: Object,
+            default: ()=>{}
+        }
+    },
     data() {
         return {
-            genderOptions: [["男", "女"]],
-            gender: ["男"],
-            ageOptions: [[]],
-            age: ["22"]
+            columns: [
+                {
+                    values: Object.keys(ages),
+                    className: "column1"
+                },
+                {
+                    values: ages["男"],
+                    className: "column2",
+                    defaultIndex: 0
+                }
+            ],
+            showPicker: false
         };
     },
 
     methods: {
-        getAgeOptions() {
-            let ageOptions = [];
-            for (let i = 1; i <= 100; i++) {
-                ageOptions.push(`${i}`);
-            }
-            this.ageOptions = [ageOptions]
+        showPopup() {
+            this.showPicker = true;
         },
-        selectChange(){
-            let params = {
-                age: this.age[0],
-                gender: this.gender[0]
-            }
-            this.$emit('selectChange',params)
+        onChange(picker, values) {
+            this.genderAndAge.gender = values[0];
+            this.genderAndAge.age = values[1];
+            this.$emit('selectChange',this.genderAndAge)
+        },
+        onConfirm(value, index) {
+            this.showPicker = false;
         }
-    },
-    created() {
-        this.getAgeOptions();
     }
 };
 </script>
@@ -67,7 +90,8 @@ export default {
     width: 100%;
     height: 100px;
     background-color: #3978ff;
-    z-index: 10;
+    z-index: 100;
+    touch-action: none;
     .top-box {
         position: relative;
         img {
@@ -78,8 +102,9 @@ export default {
         }
         .select-box {
             position: absolute;
-            right: 20px;
-            top: 60px;
+            right: 0px;
+            // top: 60px;
+            top: 50px;
             color: #fff;
             font-size: 16px;
             .left-box {
@@ -91,27 +116,52 @@ export default {
                 line-height: 25px;
                 border-radius: 25px;
                 border: 1px solid #fff;
-                padding: 0 5px ;
+                padding: 0 5px;
                 margin-left: 8px;
-                .select-gender{
+                .select-gender {
                     padding-left: 5px;
                 }
-                .weui-cell{
-                    padding: 0px 5px;
-                    display: inline-block;
+                .select-age {
+                    padding-right: 5px;
                 }
-                .weui-cell_access .weui-cell__ft:after{
-                    display: none;
+                .line {
+                    padding: 0 5px;
                 }
-                .vux-cell-box:not(:first-child):before{
-                    border-top: none;
-                }
-                .vux-cell-box{
-                    display: inline-block;
-                }
-                .vux-cell-value {
+                // .weui-cell {
+                //     padding: 0px 5px;
+                //     display: inline-block;
+                // }
+                // .weui-cell_access .weui-cell__ft:after {
+                //     display: none;
+                // }
+                // .vux-cell-box:not(:first-child):before {
+                //     border-top: none;
+                // }
+                // .vux-cell-box {
+                //     display: inline-block;
+                // }
+                // .vux-cell-value {
+                //     color: #fff;
+                // }
+            }
+            .van-icon-arrow:before {
+                display: none;
+                color: #fff;
+            }
+            .van-cell {
+                background-color: #3978ff;
+                .van-cell__value--alone {
                     color: #fff;
                 }
+            }
+            .van-cell:not(:last-child)::after {
+                border: none;
+            }
+            .van-picker__confirm {
+                color: #3978ff;
+            }
+            .van-picker__cancel {
+                color: #3978ff;
             }
         }
     }

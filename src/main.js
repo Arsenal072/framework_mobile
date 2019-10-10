@@ -11,7 +11,7 @@ import 'jquery'
 
 import "vux/src/styles/reset.less";
 import './assets/iconfont/iconfont.css'
-// import "@/assets/sass/style.scss";
+import "./assets/index.css";
 import  { ToastPlugin,ConfirmPlugin,AlertPlugin } from 'vux'
 
 //Vux 插件注册
