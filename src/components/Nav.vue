@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 18:47:08 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-10 10:56:29
+ * @Last Modified time: 2019-10-11 18:21:19
  */
 <!--  -->
 <template>
@@ -57,11 +57,11 @@ export default {
         }
     }
     .select {
-        background-color: #3978ff;
-        color: #fff;
+        // background-color: #3978ff;
+        // color: #fff;
     }
     .selectIcon{
-        color: #fff!important;
+        // color: #fff!important;
     }
 }
 </style>

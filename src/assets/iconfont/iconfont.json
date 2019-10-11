@@ -1,0 +1,142 @@
+{
+  "id": "1374569",
+  "name": "绝地求生",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "637761",
+      "name": "反馈",
+      "font_class": "fankui",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "767309",
+      "name": "客服",
+      "font_class": "customer",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "1172709",
+      "name": "发送",
+      "font_class": "fasong",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "1263271",
+      "name": "智能",
+      "font_class": "zhineng",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "1317783",
+      "name": "语音",
+      "font_class": "yuyin",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "1327132",
+      "name": "切换",
+      "font_class": "icon-qihuan",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "1761422",
+      "name": "病历",
+      "font_class": "bingli",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "1761498",
+      "name": "药",
+      "font_class": "yao",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "5121527",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
+      "icon_id": "5838475",
+      "name": "统计",
+      "font_class": "tongji",
+      "unicode": "e856",
+      "unicode_decimal": 59478
+    },
+    {
+      "icon_id": "6204098",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "7629081",
+      "name": "手机",
+      "font_class": "shouji",
+      "unicode": "e6bd",
+      "unicode_decimal": 59069
+    },
+    {
+      "icon_id": "7708017",
+      "name": "对话",
+      "font_class": "duihua",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
+      "icon_id": "7708043",
+      "name": "锁",
+      "font_class": "suo",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "8530232",
+      "name": "用户",
+      "font_class": "yonghu1",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "8554277",
+      "name": "顾客",
+      "font_class": "tubiao_guke",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "9512668",
+      "name": "下拉",
+      "font_class": "toBottom",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "9697604",
+      "name": "管理",
+      "font_class": "icon_xinyong_xianxing_jijin-",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "10060835",
+      "name": "语音",
+      "font_class": "yuyin1",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    }
+  ]
+}

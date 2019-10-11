@@ -58,6 +58,15 @@ const router = new Router({
                     ]
                 },  
                 {
+                    path: '/diseaseDetail',
+                    name: 'diseaseDetail',
+                    meta: {
+                        title: '疾病详情',
+                        requireAuth: true
+                    },
+                    component: () => import('../views/DiseaseDetail.vue'),
+                },    
+                {
                     path: '/feedback',
                     name: 'feedback',
                     meta: {

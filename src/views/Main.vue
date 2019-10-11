@@ -2,142 +2,56 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-10 11:10:49
+ * @Last Modified time: 2019-10-11 19:42:10
  */
 <!-- 主页 -->
 <template>
     <div class="main-wrapper">
         <Header @selectChange="ageChange" :genderAndAge="genderAndAge"></Header>
         <Nav @nav="nav" :navList="navList"></Nav>
-        <input-box @send='send' class="input-box"></input-box>
         <router-view class="nav-model"></router-view>
-        <div class="bubble-box">
+        <input-box @send='send' class="input-box"></input-box>
+        <div class="bubble-box" v-chat-scroll="{always: false, smooth: true}">
             <div v-for="(item, index) in arr" :key="index">
                 <div v-if="item.source=='U'" class="left-box">
                     <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                     <div class="left-bubble">
                         <span class="bubble-text" v-if='item.content&&item.content.text'>{{item.content.text}}</span>
+                        <div v-if="item.diagnoseResult">
+                            <div v-if="item.type==1">
+                                <div class="top-box">
+                                    <span>小U为你找到以下疾病</span>
+                                    <span class="learn-more" v-if="item.diseaseList.length>3">更多 ></span>
+                                </div>
+                                <div v-for="(i, ind) in item.diseaseList" :key="ind" @click="checkDetail(i)" :class="ind!=item.diseaseList.length-1?'disease-item':''">
+                                    <div v-if="ind<3" class="disease-box">
+                                        <div>
+                                            <span class="iconfont icon-bingli"></span>
+                                        </div>
+                                        <div class="top-title">
+                                            <span class="title big-title">{{i.name}}</span>
+                                            <a :href="i.url" class="link">查看百科</a>
+                                            <span class="desc">{{i.desc}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="item-bottom" v-if="i.cureDepartments.length">
+                                        <span class="department-title">推荐科室:</span>
+                                        <div class="department">
+                                            <span v-for="(j, inde) in i.cureDepartments" :key="inde">{{j}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="item.type==3" class="symptom-box">
+                                <span>{{item.diagnoseResult}}</span>
+                                <p>您是否还有以下伴随症状</p>
+                                <div>
+                                    <span v-for="(i,ind) in item.selectSymptomList" :key="ind" class="symptom-item" @click="selectSymptom(item.currentSymptom,i)">{{i}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
 
-                        <div v-if="item.type==1">
-                            <div v-if="item.description=='diseaseList'">
-                                <span class="bubble-text bold">{{item.tip}}</span>
-                                <div v-for="(i ,j) in item.result" :key="j">
-                                    <p @click="_getDiseaseDetail(i.id)" class="min-title">{{i.name}}</p>
-                                </div>
-                            </div>
-                            <div v-else>
-                                <p class="bubble-title">{{item.name}}</p>
-                                <p class="min-title bold">概述</p>
-                                <p v-html="item.introduction"></p>
-                                <p class="min-title bold">病因描述</p>
-                                <p>{{item.reasonDescription}}</p>
-                                <p class="min-title bold">症状描述</p>
-                                <p>{{item.symptomDescription}}</p>
-                                <p class="min-title bold">推荐科室</p>
-                                <div v-if="item.deptId">
-                                    <p class="recommendedDepartment">小U推荐您去本院
-                                        <span class="min-title">{{item.className}}</span>
-                                        挂号
-                                    </p>
-                                    <div class="dept">
-                                        <span>{{item.className}}</span>
-                                        <span class="blue">挂号 ></span>
-                                    </div>
-                                </div>
-                                <p class="recommendedDepartment" v-if="!item.deptId">小U推荐您去
-                                    <span class="min-title">{{item.className}}</span>
-                                    挂号，但本院没有开设这个科室
-                                </p>
-                                <p v-if="item.deptId" class="min-title bold">推荐医生</p>
-                                <div v-if="item.deptId&&item.respArr.length" class="dorctor-list">
-                                    <div v-for="(i,j) in item.respArr" :key="j" class="doctor-item">
-                                        <div>
-                                            <img :src="i.photo" alt="">
-                                        </div>
-                                        <div>
-                                            <span>{{i.name}}</span>
-                                            <span>{{i.position}}</span>
-                                        </div>
-                                        <div class="blue">
-                                            挂号 >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="item.type==2">
-                            <div v-if="item.description=='medicineList'">
-                                <span class="bubble-text bold">{{item.tip}}</span>
-                                <div v-for="(i ,j) in item.arr" :key="j">
-                                    <p @click="_getMedicineDetail(i.id)" class="min-title">{{i.name}}</p>
-                                </div>
-                            </div>
-                            <div v-if="item.description=='medicineDetail'">
-                                <p class="bubble-title">{{item.showName}}</p>
-                                <p class="min-title bold">药物名称：<span class="medicine-name">{{item.commonName}}</span></p>
-                                <p class="min-title bold">剂量</p>
-                                <p v-html="item.dosage"></p>
-                                <p class="min-title bold">用法</p>
-                                <p>{{item.indication}}</p>
-                            </div>
-                        </div>
-                        <div v-if="item.type!=1&&item.type!=2">
-                            <div v-if="item.type==3">
-                                <p class="bubble-text bold">{{item.tip}}</p>
-                                <div v-if="item.description=='bodyList'" class="bodyList">
-                                    <div v-for="(i,j) in item.bodyList" :key="j" class="body-item">
-                                        <span @click="_getSymptomList(i.id)" class="min-title">{{i.name}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="item.description=='SymptomList'">
-                                <p class="bubble-text bold">{{item.tip}}</p>
-                                <div v-for="(i,j) in item.arr" :key="j">
-                                    <span @click="_getCompanySymptom(i.id)" class="min-title">{{i.symptom}}</span>
-                                </div>
-                            </div>
-                            <div v-if="item.description=='acompanySymptom'">
-                                <p class="bubble-text bold">{{item.tip}}</p>
-                                <div v-for="(i,j) in item.arr" :key="j">
-                                    <span @click="_getDisease(i.id)" class="min-title">{{i.content}}</span>
-                                </div>
-                            </div>
-                            <div v-if="item.description=='diseaseList'">
-                                <p class="bubble-text bold">{{item.tip}}</p>
-                                <div v-for="(i,j) in item.list" :key="j">
-                                    <span class="min-title">{{i.name}}</span>
-                                </div>
-                                <p class="min-title bold">推荐科室</p>
-                                <div v-if="item.deptId">
-                                    <p class="recommendedDepartment">小U推荐您去本院
-                                        <span class="min-title">{{item.className}}</span>
-                                        挂号
-                                    </p>
-                                    <p class="dept">
-                                        <span>{{item.className}}</span>
-                                        <span class="blue">挂号 ></span>
-                                    </p>
-                                </div>
-                                <p class="recommendedDepartment" v-if="!item.deptId">小U推荐您去
-                                    <span class="min-title">{{item.className}}</span>
-                                    挂号，但本院没有开设这个科室
-                                </p>
-                                <p v-if="item.deptId" class="min-title bold">推荐医生</p>
-                                <div v-if="item.deptId&&item.respArr.length" class="dorctor-list">
-                                    <div v-for="(i,j) in item.respArr" :key="j" class="doctor-item">
-                                        <div>
-                                            <img :src="i.photo" alt="">
-                                        </div>
-                                        <div>
-                                            <span>{{i.name}}</span>
-                                            <span>{{i.position}}</span>
-                                        </div>
-                                        <div class="blue">
-                                            挂号 >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -147,7 +61,6 @@
                 </div>
             </div>
         </div>
-        <router-view></router-view>
     </div>
 </template>
 
@@ -156,24 +69,11 @@ import Header from "../components/Header";
 import InputBox from "../components/InputBox";
 import Nav from "../components/Nav";
 import { autoResponse } from "../lib/autoResponse";
-import {
-    queryCheckBodyList,
-    querySymptomList,
-    queryQuestionOptionList,
-    queryType,
-    queryDiseaseDetail,
-    queryDisease,
-    queryMedicineList,
-    queryMedicineDetail,
-    queryDeptName,
-    queryDoctorList,
-    inquiry
-} from "../service/index";
+import { inquiry } from "../service/index";
 import { Button } from "vant";
 export default {
     name: "Main",
     components: { Header, InputBox, Nav, [Button.name]: Button },
-
     data() {
         return {
             navList: [
@@ -209,20 +109,20 @@ export default {
             pageCount: 1,
             symptomId: "",
             inputText: "",
-            offsetTop: 0,
-            wechatConfigToken: "795ce1e2-c86a-48cf-8e0b-6155dba93b40",
+            offsetTop: 30,
             genderAndAge: {
                 age: 24,
                 gender: "男"
-            }
+            },
+            isShowDiseaseDetail: false
         };
     },
 
     methods: {
         // 年龄性别变更
         ageChange(params) {
-            this.genderAndAge.age = params.age;
-            this.genderAndAge.gender = params.gender;
+            this.age = params.age;
+            this.gender = params.gender;
         },
         // 头部导航
         nav(item) {
@@ -245,8 +145,7 @@ export default {
                     content: inputText
                 });
                 this.getHeight();
-                // this._getInquryType(inputText)
-                this._getQueryType(inputText);
+                this._getInquryType(inputText);
             }
         },
         // 自动应答
@@ -260,283 +159,39 @@ export default {
             this.getHeight();
         },
         // 问诊类型
-        _getInquryType(inputValue){
+        _getInquryType(inputValue) {
             let params = {
                 inputText: inputValue,
                 wechatConfigToken: 1
                 // localStorage.getItem("wechatConfigToken")?localStorage.getItem("wechatConfigToken"):1
-            }
-            inquiry(params).then(res=>{
-
-            })
-        },
-        // 询问类型
-        _getQueryType(inputText) {
-            let params = {
-                inputContent: inputText,
-                age: this.age,
-                gender: this.gender == "男" ? "M" : "F"
             };
-            queryType(params).then(res => {
-                if (res.data.type == 1) {
-                    this.arr.push(
-                        Object.assign(res.data, {
-                            source: "U",
-                            icon: "icon-customer",
-                            tip: "您是否查找以下疾病？",
-                            description: "diseaseList"
-                        })
-                    );
-                    this.getHeight();
-                } else if (res.data.type == 2) {
-                    this._getMedicineList().then(res => {
-                        let arr = res.data.result.filter((item, index) => {
-                            return index < 20;
-                        });
-                        this.arr.push(
-                            Object.assign(
-                                { arr },
-                                {
-                                    source: "U",
-                                    icon: "icon-customer",
-                                    tip: "您是否查找以下药物？",
-                                    description: "medicineList",
-                                    type: 2
-                                }
-                            )
-                        );
-                        this.getHeight();
-                    });
-                } else if (res.data.type == 3) {
-                    this._getBodyList().then(res => {
-                        this.arr.push(
-                            Object.assign(res.data, {
-                                source: "U",
-                                icon: "icon-customer",
-                                tip: "您身体哪个部位不舒服?",
-                                description: "bodyList",
-                                type: 3
-                            })
-                        );
-                        this.getHeight();
-                    });
-                } else if (res.data.type == 4) {
-                    let arr = res.data.result.bodySymptomList.filter(item => {
-                        return item.haveQuestion == 1;
-                    });
-                    this.arr.push(
-                        Object.assign(
-                            { arr },
-                            {
-                                source: "U",
-                                icon: "icon-customer",
-                                tip: "您是否患有以下症状？",
-                                description: "SymptomList"
-                            }
-                        )
-                    );
-                    this.getHeight();
-                }
-            });
-        },
-        // 疾病详情
-        _getDiseaseDetail(diseaseId) {
-            queryDiseaseDetail({ diseaseId: diseaseId }).then(res => {
-                // 获取T对应科室
-                queryDeptName({
-                    deptName: res.data.className,
-                    wechatConfigToken: this.wechatConfigToken
-                }).then(response => {
-                    if (Object.keys(response.data).length) {
-                        res.data.className = response.data.name;
-                        this.$set(res.data, "deptId", response.data.id);
-                        // 获取医生列表
-                        queryDoctorList({
-                            deptId: response.data.id,
-                            wechatConfigToken: this.wechatConfigToken
-                        }).then(resp => {
-                            let respArr = resp.data;
-                            this.arr.push(
-                                Object.assign(
-                                    res.data,
-                                    { respArr },
-                                    {
-                                        source: "U",
-                                        icon: "icon-customer",
-                                        description: "diseaseDetail",
-                                        type: 1
-                                    }
-                                )
-                            );
-                            this.getHeight();
-                        });
-                    } else {
-                        this.arr.push(
-                            Object.assign(res.data, {
-                                source: "U",
-                                icon: "icon-customer",
-                                description: "diseaseDetail",
-                                type: 1
-                            })
-                        );
-                        this.getHeight();
-                    }
-                });
-            });
-        },
-        // 身体部位
-        _getBodyList() {
-            let params = {
-                pageNum: 1,
-                pageSize: 20
-            };
-            return new Promise((resolve, reject) => {
-                queryCheckBodyList(params).then(res => {
-                    resolve(res);
-                });
-            });
-        },
-        // 症状列表
-        _getSymptomList(id) {
-            let params = {
-                pageNum: 1,
-                pageSize: 50,
-                age: this.age,
-                gender: this.gender == "男" ? "M" : "F",
-                bodyId: id
-            };
-            querySymptomList(params).then(res => {
-                let arr = res.data.bodySymptomList.filter(item => {
-                    return item.haveQuestion == 1;
-                });
-                this.arr.push(
-                    Object.assign(
-                        { arr },
-                        {
-                            source: "U",
-                            icon: "icon-customer",
-                            tip: "您是否患有以下症状？",
-                            description: "SymptomList"
-                        }
-                    )
-                );
-                this.getHeight();
-            });
-        },
-        // 伴随症状
-        _getCompanySymptom(id) {
-            this.symptomId = id;
-            let params = {
-                pageNum: this.pageCount,
-                pageSize: 10,
-                gender: this.gender == "男" ? "M" : "F",
-                symptomId: id
-            };
-            queryQuestionOptionList(params).then(res => {
-                let arr = [];
-                res.data.list &&
-                    res.data.list.forEach(item => {
-                        item.list1 &&
-                            item.list1.forEach(i => {
-                                arr.push(i);
-                            });
-                    });
-                this.arr.push(
-                    Object.assign(
-                        { arr },
-                        {
-                            source: "U",
-                            icon: "icon-customer",
-                            tip: "您是否伴随以下症状？",
-                            description: "acompanySymptom"
-                        }
-                    )
-                );
-                this.getHeight();
-            });
-        },
-        // 获取疾病列表
-        _getDisease(id) {
-            let params = {
-                age: this.age,
-                gender: this.gender == "男" ? "M" : "F",
-                symptomId: this.symptomId,
-                optionId: id
-            };
-            queryDisease(params).then(res => {
-                queryDeptName({
-                    deptName: res.data.className,
-                    wechatConfigToken: this.wechatConfigToken
-                }).then(response => {
-                    if (Object.keys(response.data).length) {
-                        res.data.className = response.data.name;
-                        this.$set(res.data, "deptId", response.data.id);
-                        // 获取医生列表
-                        queryDoctorList({
-                            deptId: response.data.id,
-                            wechatConfigToken: this.wechatConfigToken
-                        }).then(resp => {
-                            let respArr = resp.data;
-                            this.arr.push(
-                                Object.assign(
-                                    res.data,
-                                    { respArr },
-                                    {
-                                        source: "U",
-                                        icon: "icon-customer",
-                                        tip: "您可能患有以下疾病",
-                                        description: "diseaseList"
-                                    }
-                                )
-                            );
-                            this.getHeight();
-                        });
-                    } else {
-                        this.arr.push(
-                            Object.assign(res.data, {
-                                source: "U",
-                                icon: "icon-customer",
-                                tip: "您可能患有以下疾病",
-                                description: "diseaseList"
-                            })
-                        );
-                        this.getHeight();
-                    }
-                });
-            });
-        },
-        // 问药
-        _getMedicineList() {
-            let params = {
-                medicine: this.inputText
-            };
-            return new Promise((resolve, reject) => {
-                queryMedicineList(params).then(res => {
-                    resolve(res);
-                });
-            });
-        },
-        // 药物详情
-        _getMedicineDetail(id) {
-            let params = {
-                medicineId: id
-            };
-            queryMedicineDetail(params).then(res => {
+            inquiry(params).then(res => {
                 this.arr.push(
                     Object.assign(res.data, {
                         source: "U",
-                        icon: "icon-customer",
-                        description: "medicineDetail",
-                        type: 2
+                        icon: "icon-customer"
                     })
                 );
+                localStorage.setItem("arr", JSON.stringify(this.arr));
                 this.getHeight();
             });
+        },
+        // 查看疾病詳情
+        checkDetail(item) {
+            this.$router.push({
+                path: "/diseaseDetail",
+                query: {
+                    diseaseObj: item
+                }
+            });
+        },
+        showDiseaseDetail() {
+            this.isShowDiseaseDetail = !this.isShowDiseaseDetail;
         },
         // 获取高度
         getHeight() {
             let arr = document.getElementsByClassName("left-bubble");
-            if(arr.length>0){
+            if (arr.length > 0) {
                 let height = arr[arr.length - 1].offsetTop;
                 this.offsetTop = this.offsetTop + height;
                 let top = this.offsetTop ? this.offsetTop : height;
@@ -555,6 +210,13 @@ export default {
                 this.$route.query.wechatConfigToken
             );
         }
+        if (
+            localStorage.getItem("arr") &&
+            Object.keys(localStorage.getItem("arr")).length
+        ) {
+            this.arr = JSON.parse(localStorage.getItem("arr"));
+            this.getHeight();
+        }
     }
 };
 </script>
@@ -565,7 +227,7 @@ export default {
         padding-top: 180px;
     }
     .bubble-box {
-        padding-bottom: 70px;
+        margin-bottom: 100px;
         z-index: 5;
         .left-box {
             margin-bottom: 15px;
@@ -574,7 +236,7 @@ export default {
             align-items: flex-end;
             .iconfont {
                 padding-left: 5px;
-                font-size: 30px;
+                font-size: 35px;
                 color: #3978ff;
                 line-height: 30px;
                 font-weight: bold;
@@ -582,87 +244,112 @@ export default {
             .left-bubble {
                 display: inline-block;
                 position: relative;
-                // left: 5px;
-                width: 90%;
+                width: 94%;
                 background: #fff;
                 color: #333;
-                // border: 1px solid #333;
                 font-size: 16px;
-                padding: 8px;
                 -moz-border-radius: 12px;
                 -webkit-border-radius: 12px;
                 border-radius: 12px;
-                &::after {
-                    content: "";
-                    border: 8px solid #ffffff00;
-                    border-right: 8px solid #fff;
-                    position: absolute;
-                    top: 20px;
-                    left: -16px;
-                }
+                // &::after {
+                //     content: "";
+                //     border: 8px solid #ffffff00;
+                //     border-right: 8px solid #fff;
+                //     position: absolute;
+                //     top: 20px;
+                //     left: -16px;
+                // }
                 .bubble-text {
+                    display: block;
+                    padding: 8px;
                     color: #333;
                 }
-                .bodyList {
+                .top-box {
+                    padding: 8px;
+                    border-radius: 12px 12px 0 0;
+                    background-color: #3978ff;
+                    color: #fff;
+                    .learn-more {
+                        float: right;
+                        padding-right: 10px;
+                        color: #fff;
+                    }
+                }
+                .disease-box {
                     display: flex;
                     justify-content: space-between;
-                    flex-wrap: wrap;
-                    align-content: flex-start;
-                    .body-item {
+                    border-radius: 5px;
+                    font-size: 15px;
+                    overflow: hidden;
+                    margin: 10px 0 0 0;
+                    padding-bottom: 5px;
+                    .iconfont {
+                        line-height: 70px;
+                    }
+                    .top-title {
+                        position: relative;
+                        margin-left: 10px;
+                        .big-title {
+                            font-size: 16px;
+                            display: inline;
+                        }
+                        .link {
+                            position: absolute;
+                            color: #3978ff;
+                            text-decoration: underline;
+                            padding-left: 10px;
+                            font-size: 10px;
+                            top: 5px;
+                        }
+                    }
+                    .title {
+                        font-size: 15px;
+                        font-weight: bold;
+                        text-align: center;
+                    }
+                    .desc {
                         display: inline-block;
-                        border: 1px solid #3978ff;
-                        border-radius: 10px;
-                        padding: 0 10px;
-                        margin: 5px 0px;
+                        height: 50px;
+                        width: 100%;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 2;
+                        overflow: hidden;
                     }
                 }
-                .bubble-title {
-                    font-weight: bold;
-                    text-align: center;
-                    color: #333;
+                .disease-item {
+                    border-bottom: 2px solid #ddd;
                 }
-                .min-title {
-                    color: #3978ff;
-                    margin-top: 10px;
-                    :first-child {
-                        margin-top: 0px;
+                .item-bottom {
+                    margin-left: 10px;
+                    .department-title {
+                        font-weight: bold;
+                    }
+                    .department {
+                        display: inline-block;
+                        margin-bottom: 10px;
+                        span {
+                            padding-right: 10px;
+                        }
                     }
                 }
-                .bold {
-                    color: #333;
-                    font-weight: bold;
-                }
-                .blue {
-                    color: #3978ff;
-                }
-                .dept {
-                    border: 1px solid #333;
-                    margin-top: 10px;
-                    padding: 10px 20px 10px;
-                    border-radius: 5px;
-                    .blue {
-                        float: right;
+                .symptom-box {
+                    padding: 8px;
+                    p{
+                        font-weight: bold;
+                        padding: 5px 0px 0 0 ;
                     }
-                }
-                .medicine-name {
-                    color: #333;
-                }
-                .recommendedDepartment {
-                    padding-top: 10px;
-                }
-                .doctor-item {
-                    display: flex;
-                    justify-content: space-around;
-                    border: 1px solid #333;
-                    margin-bottom: 10px;
-                    border-radius: 5px;
-                    align-items: center;
-                    img {
-                        padding-top: 5px;
-                        width: 40px;
-                    }
-                    &:first-child {
-                        margin-top: 10px;
+                    div {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: space-between;
+                        .symptom-item {
+                            display: inline-block;
+                            border: 1px solid #3978ff;
+                            border-radius: 5px;
+                            padding: 3px 8px;
+                            margin-top: 8px;
+                        }
                     }
                 }
             }
@@ -691,7 +378,6 @@ export default {
                     position: absolute;
                     top: 15px;
                     right: -16px;
-                    // background-color: #3978ff;
                 }
             }
             .iconfont {
@@ -710,3 +396,4 @@ export default {
     }
 }
 </style>
+
