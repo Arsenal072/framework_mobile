@@ -46,3 +46,7 @@ export function queryDoctorList(params){
 export function inquiry(params){
     return axios.get(http + '/questionDiagnose?question=' + params.inputText+ '&wechatConfigToken=' + params.wechatConfigToken)
 }
+// 症状分页
+export function querySymptomByPage(params){
+    return axios.get(http + '/questionSymptomByPageSize?uuid='+ params.uuid + '&pageNo=' + params.pageNum + '&pageSize=' + params.pageSize)
+}

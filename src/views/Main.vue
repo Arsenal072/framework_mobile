@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-11 19:42:10
+ * @Last Modified time: 2019-10-12 15:40:32
  */
 <!-- 主页 -->
 <template>
@@ -43,10 +43,18 @@
                                 </div>
                             </div>
                             <div v-if="item.type==3" class="symptom-box">
-                                <span>{{item.diagnoseResult}}</span>
-                                <p>您是否还有以下伴随症状</p>
-                                <div>
-                                    <span v-for="(i,ind) in item.selectSymptomList" :key="ind" class="symptom-item" @click="selectSymptom(item.currentSymptom,i)">{{i}}</span>
+                                <div class="top-box">
+                                    <span>诊断结果</span>
+                                </div>
+                                <div class="detail-info">
+                                    <span>{{item.diagnoseResult}}</span>
+                                    <!-- <p>您是否还有以下伴随症状</p>
+                                    <div class="symptom-item-box">
+                                        <span v-for="(i,ind) in item.selectSymptomList" :key="ind" :class="['symptom-item',isSelect==ind?'selectSymptom':'']" @click="selectSymptom(item.currentSymptom,i,ind)" v-if="item.selectSymptomList.length>pageSize&&ind<pageSize">{{i}}</span>
+                                    </div>
+                                    <div class="page-box" v-if="item.selectSymptomList.length" @click="nextPage">
+                                        <span>以上都没有</span>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -61,6 +69,15 @@
                 </div>
             </div>
         </div>
+        <van-action-sheet v-model="show" title="您是否有以下伴随症状" :overlay="true" round class="action-sheet">
+            <div class="symptom-item-box">
+                <span v-for="(item,index) in symptomObj.symptomList" :key="index" :class="['symptom-item',isSelect==index?'selectSymptom':'']" @click="selectSymptom(item,index)" v-if="index<pageSize">{{item}}</span>
+            </div>
+            <div class="page-box" @click="nextPage">
+                <span>以上都没有</span>
+            </div>
+        </van-action-sheet>
+
     </div>
 </template>
 
@@ -69,11 +86,17 @@ import Header from "../components/Header";
 import InputBox from "../components/InputBox";
 import Nav from "../components/Nav";
 import { autoResponse } from "../lib/autoResponse";
-import { inquiry } from "../service/index";
-import { Button } from "vant";
+import { inquiry, querySymptomByPage } from "../service/index";
+import { Button, ActionSheet } from "vant";
 export default {
     name: "Main",
-    components: { Header, InputBox, Nav, [Button.name]: Button },
+    components: {
+        Header,
+        InputBox,
+        Nav,
+        [Button.name]: Button,
+        [ActionSheet.name]: ActionSheet
+    },
     data() {
         return {
             navList: [
@@ -114,7 +137,12 @@ export default {
                 age: 24,
                 gender: "男"
             },
-            isShowDiseaseDetail: false
+            isShowDiseaseDetail: false,
+            isSelect: -1,
+            pageNum: 1,
+            pageSize: 6,
+            show: false,
+            symptomObj: {}
         };
     },
 
@@ -166,10 +194,15 @@ export default {
                 // localStorage.getItem("wechatConfigToken")?localStorage.getItem("wechatConfigToken"):1
             };
             inquiry(params).then(res => {
+                if (res.data.type == 3) {
+                    this.show = true;
+                    this.symptomObj = res.data;
+                    this.$set(this.symptomObj,'symptomList',this.symptomObj.selectSymptomList)
+                }
                 this.arr.push(
                     Object.assign(res.data, {
-                        source: "U",
-                        icon: "icon-customer"
+                        source: "U"
+                        // icon: "icon-customer"
                     })
                 );
                 localStorage.setItem("arr", JSON.stringify(this.arr));
@@ -187,6 +220,21 @@ export default {
         },
         showDiseaseDetail() {
             this.isShowDiseaseDetail = !this.isShowDiseaseDetail;
+        },
+        selectSymptom(item, index) {
+            this.isSelect = index;
+        },
+        nextPage() {
+            this.pageNum = this.pageNum + 1
+            let params = {
+                uuid: this.symptomObj.uuid,
+                pageNum: this.pageNum,
+                pageSize: this.pageSize
+            }
+            querySymptomByPage(params).then(res=>{
+                this.symptomObj = res.data
+                this.$set(this.symptomObj,'symptomList',this.symptomObj.symptomNames)
+            })
         },
         // 获取高度
         getHeight() {
@@ -334,21 +382,11 @@ export default {
                     }
                 }
                 .symptom-box {
-                    padding: 8px;
-                    p{
-                        font-weight: bold;
-                        padding: 5px 0px 0 0 ;
-                    }
-                    div {
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: space-between;
-                        .symptom-item {
-                            display: inline-block;
-                            border: 1px solid #3978ff;
-                            border-radius: 5px;
-                            padding: 3px 8px;
-                            margin-top: 8px;
+                    .detail-info {
+                        padding: 8px;
+                        p {
+                            font-weight: bold;
+                            padding: 5px 0px 0 0;
                         }
                     }
                 }
@@ -393,6 +431,38 @@ export default {
     .input-box {
         z-index: 10;
         background-color: #fff;
+    }
+    .action-sheet {
+        padding-bottom: 10px;
+        .symptom-item-box {
+            display: flex;
+            padding: 0 10px;
+            padding-top: 10px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .symptom-item {
+                display: inline-block;
+                border: 1px solid #3978ff;
+                border-radius: 5px;
+                padding: 3px 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+            .selectSymptom {
+                background-color: #3978ff;
+                color: #fff;
+            }
+        }
+        .page-box {
+            text-align: right;
+            color: #3978ff;
+            text-decoration: underline;
+            font-size: 14px;
+            padding: 5px 10px 10px 0px;
+        }
+        // .van-action-sheet__close {
+        //     display: none;
+        // }
     }
 }
 </style>
