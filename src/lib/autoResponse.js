@@ -3,17 +3,17 @@ export function autoResponse(navItem, inputText){
     // 头部导航，无输入
     if(navItem.type=='智能导诊'){
         if(inputText==''){
-            obj.text = 'Hi！我是小U，可以给您提供智能导诊服务哦~'
+            obj.text = 'Hi！我是小U，可以给您提供智能导诊服务,您可以参考以下方式向我提问哦~'
             // obj.linkList = ['虹视','视物变形','闪光幻觉','眼睑红肿']
         }
     } else if(navItem.type=='智能问病'){
         if(inputText==''){
-            obj.text = 'Hi！我是小U，可以给您提供智能问病服务哦~'
+            obj.text = 'Hi！我是小U，可以给您提供智能问病服务哦，您是否查找以下疾病'
             // obj.linkList = ['角膜炎','发烧']
         }
     } else if(navItem.type=='药物查询'){
         if(inputText==''){
-            obj.text = 'Hi！我是小U，可以给您提供药物查询服务哦~'
+            obj.text = 'Hi！我是小U，可以给您提供药物查询服务哦，你是否在查找以下药物'
             // obj.linkList = ['达菲','999感冒灵']
         }
     } else if(navItem.type=='意见反馈'){

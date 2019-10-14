@@ -50,3 +50,20 @@ export function inquiry(params){
 export function querySymptomByPage(params){
     return axios.get(http + '/questionSymptomByPageSize?uuid='+ params.uuid + '&pageNo=' + params.pageNum + '&pageSize=' + params.pageSize)
 }
+// 进一步输入症状，查询疾病
+export function questionDiseaseBySymptoms(params){
+    return axios.post(`${http}/questionDiseaseBySymptoms`,params)
+}
+// 推荐问题
+export function recommendQuestion(){
+    return axios.get(`${http}/intelligence/question/recommend`)
+}
+// 推荐疾病
+export function recommendDisease(){
+    return axios.get(`${http}/intelligence/disease/recommend`)
+}
+// 推荐药物
+export function recommendDrug(){
+    return axios.get(`${http}/intelligence/drug/recommend`)
+}
+

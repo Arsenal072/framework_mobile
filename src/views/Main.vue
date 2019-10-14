@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-12 15:40:32
+ * @Last Modified time: 2019-10-14 21:03:02
  */
 <!-- 主页 -->
 <template>
@@ -13,18 +13,22 @@
         <input-box @send='send' class="input-box"></input-box>
         <div class="bubble-box" v-chat-scroll="{always: false, smooth: true}">
             <div v-for="(item, index) in arr" :key="index">
-                <div v-if="item.source=='U'" class="left-box">
+                <div v-if="item.source&&item.source=='U'" class="left-box">
                     <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                     <div class="left-bubble">
                         <span class="bubble-text" v-if='item.content&&item.content.text'>{{item.content.text}}</span>
-                        <div v-if="item.diagnoseResult">
+                        <div v-if="item.recommendList&&item.recommendList.length" class="recommend-box">
+                            <p v-for="(i, ind) in item.recommendList" :key="ind" class="recommend-item" @click="send(i.name)">{{i.name}}</p>
+                            <p @click="nextPatch" class="next-patch">下一批</p>
+                        </div>
+                        <div v-if="item.diagnoseResult||item.diseaseList||item.drugList">
                             <div v-if="item.type==1">
                                 <div class="top-box">
                                     <span>小U为你找到以下疾病</span>
-                                    <span class="learn-more" v-if="item.diseaseList.length>3">更多 ></span>
+                                    <span class="learn-more" v-if="item.diseaseList.length>3" @click="checkMoreDisease(item.diseaseList)">更多 ></span>
                                 </div>
-                                <div v-for="(i, ind) in item.diseaseList" :key="ind" @click="checkDetail(i)" :class="ind!=item.diseaseList.length-1?'disease-item':''">
-                                    <div v-if="ind<3" class="disease-box">
+                                <div v-for="(i, ind) in item.diseaseList" :key="ind" @click="checkDetail(i)" :class="ind!=item.diseaseList.length-1?'disease-item':''" v-if="ind<3">
+                                    <div class="disease-box">
                                         <div>
                                             <span class="iconfont icon-bingli"></span>
                                         </div>
@@ -34,10 +38,28 @@
                                             <span class="desc">{{i.desc}}</span>
                                         </div>
                                     </div>
-                                    <div class="item-bottom" v-if="i.cureDepartments.length">
+                                    <div class="item-bottom" v-if="i.cureDepartments.length&&ind<3">
                                         <span class="department-title">推荐科室:</span>
                                         <div class="department">
                                             <span v-for="(j, inde) in i.cureDepartments" :key="inde">{{j}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="item.type==2" class="drugList-box">
+                                <div class="top-box">
+                                    <span>小U为你找到以下药物</span>
+                                    <span class="learn-more" @click="checkMoreDrug(item.drugList)" v-if="item.drugList.length>3">更多 ></span>
+                                </div>
+                                <div v-for="(i,ind) in item.drugList" :key="ind" v-if="ind<5" @click="checkDetail(i)" class="disease-item">
+                                    <div class="disease-box">
+                                        <!-- <div>
+                                            <span class="iconfont icon-bingli"></span>
+                                        </div> -->
+                                        <div class="top-title">
+                                            <span class="title big-title" @click="checkDrugDetail(i.url)">{{i.name}}</span>
+                                            <a :href="i.url" class="link">查看百科</a>
+                                            <!-- <span class="desc">{{i.desc}}</span> -->
                                         </div>
                                     </div>
                                 </div>
@@ -48,13 +70,6 @@
                                 </div>
                                 <div class="detail-info">
                                     <span>{{item.diagnoseResult}}</span>
-                                    <!-- <p>您是否还有以下伴随症状</p>
-                                    <div class="symptom-item-box">
-                                        <span v-for="(i,ind) in item.selectSymptomList" :key="ind" :class="['symptom-item',isSelect==ind?'selectSymptom':'']" @click="selectSymptom(item.currentSymptom,i,ind)" v-if="item.selectSymptomList.length>pageSize&&ind<pageSize">{{i}}</span>
-                                    </div>
-                                    <div class="page-box" v-if="item.selectSymptomList.length" @click="nextPage">
-                                        <span>以上都没有</span>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -71,7 +86,7 @@
         </div>
         <van-action-sheet v-model="show" title="您是否有以下伴随症状" :overlay="true" round class="action-sheet">
             <div class="symptom-item-box">
-                <span v-for="(item,index) in symptomObj.symptomList" :key="index" :class="['symptom-item',isSelect==index?'selectSymptom':'']" @click="selectSymptom(item,index)" v-if="index<pageSize">{{item}}</span>
+                <span v-for="(item,index) in symptomObj.symptomList" :key="index" :class="['symptom-item',isSelect==index?'selectSymptom':'']" @click="selectSymptom(symptomObj,item,index)" v-if="index<pageSize">{{item}}</span>
             </div>
             <div class="page-box" @click="nextPage">
                 <span>以上都没有</span>
@@ -86,8 +101,16 @@ import Header from "../components/Header";
 import InputBox from "../components/InputBox";
 import Nav from "../components/Nav";
 import { autoResponse } from "../lib/autoResponse";
-import { inquiry, querySymptomByPage } from "../service/index";
+import {
+    inquiry,
+    querySymptomByPage,
+    questionDiseaseBySymptoms,
+    recommendQuestion,
+    recommendDisease,
+    recommendDrug
+} from "../service/index";
 import { Button, ActionSheet } from "vant";
+
 export default {
     name: "Main",
     components: {
@@ -137,7 +160,6 @@ export default {
                 age: 24,
                 gender: "男"
             },
-            isShowDiseaseDetail: false,
             isSelect: -1,
             pageNum: 1,
             pageSize: 6,
@@ -179,12 +201,52 @@ export default {
         // 自动应答
         _response(item, inputText) {
             let obj = autoResponse(item, inputText);
-            this.arr.push({
-                source: "U",
-                icon: "icon-customer",
-                content: obj
+            this._queryRecommend(item.id).then(res => {
+                this.arr.push({
+                    source: "U",
+                    icon: "icon-customer",
+                    content: obj,
+                    recommendList: res.data.data
+                });
+                this.getHeight();
             });
-            this.getHeight();
+        },
+        // 获取推荐
+        _queryRecommend(id) {
+            return new Promise((resolve, reject) => {
+                if (id == 0) {
+                    recommendQuestion().then(res => {
+                        resolve(res);
+                    });
+                } else if (id == 1) {
+                    recommendDisease().then(res => {
+                        resolve(res);
+                    });
+                } else if (id == 2) {
+                    recommendDrug().then(res => {
+                        resolve(res);
+                    });
+                }
+            });
+        },
+        // 下一批
+        nextPatch() {
+            this._queryRecommend(this.navItem.id).then(res => {
+                let obj = autoResponse(this.navItem, '');
+                this.arr[this.arr.length-1] = {
+                    source: "U",
+                    icon: "icon-customer",
+                    content: obj,
+                    recommendList: res.data.data
+                }
+                // this.arr.push({
+                //     source: "U",
+                //     icon: "icon-customer",
+                //     content: obj,
+                //     recommendList: res.data.data
+                // });
+                this.getHeight();
+            });
         },
         // 问诊类型
         _getInquryType(inputValue) {
@@ -197,7 +259,11 @@ export default {
                 if (res.data.type == 3) {
                     this.show = true;
                     this.symptomObj = res.data;
-                    this.$set(this.symptomObj,'symptomList',this.symptomObj.selectSymptomList)
+                    this.$set(
+                        this.symptomObj,
+                        "symptomList",
+                        this.symptomObj.selectSymptomList
+                    );
                 }
                 this.arr.push(
                     Object.assign(res.data, {
@@ -209,6 +275,15 @@ export default {
                 this.getHeight();
             });
         },
+        // 查看更多疾病
+        checkMoreDisease(diseaseList) {
+            this.$router.push({
+                path: "/moreDisease",
+                query: {
+                    diseaseList: diseaseList
+                }
+            });
+        },
         // 查看疾病詳情
         checkDetail(item) {
             this.$router.push({
@@ -218,23 +293,62 @@ export default {
                 }
             });
         },
-        showDiseaseDetail() {
-            this.isShowDiseaseDetail = !this.isShowDiseaseDetail;
+        // 查看更多药物
+        checkMoreDrug(drugList) {
+            this.$router.push({
+                path: "/moreDrug",
+                query: {
+                    drugList: drugList
+                }
+            });
         },
-        selectSymptom(item, index) {
+        // 查看药物详情
+        checkDrugDetail(url) {
+            window.location.href = url;
+        },
+        // 选择症状
+        selectSymptom(symptomObj, item, index) {
             this.isSelect = index;
+            this.symptomObj.currentSymptom.push(item);
+            let params = {
+                symptomNames: this.symptomObj.currentSymptom
+            };
+            questionDiseaseBySymptoms(params).then(res => {
+                if (res.data.end) {
+                    this.show = false;
+                    this.arr.push(
+                        Object.assign({
+                            source: "U",
+                            diseaseList: res.data.diseaseNodes,
+                            type: 1,
+                            diagnoseResult: "11"
+                        })
+                    );
+                    localStorage.setItem("arr", JSON.stringify(this.arr));
+                } else {
+                    this.$set(
+                        this.symptomObj,
+                        "symptomList",
+                        res.data.selectSymptomList
+                    );
+                }
+            });
         },
         nextPage() {
-            this.pageNum = this.pageNum + 1
+            this.pageNum = this.pageNum + 1;
             let params = {
                 uuid: this.symptomObj.uuid,
                 pageNum: this.pageNum,
                 pageSize: this.pageSize
-            }
-            querySymptomByPage(params).then(res=>{
-                this.symptomObj = res.data
-                this.$set(this.symptomObj,'symptomList',this.symptomObj.symptomNames)
-            })
+            };
+            querySymptomByPage(params).then(res => {
+                this.symptomObj = res.data;
+                this.$set(
+                    this.symptomObj,
+                    "symptomList",
+                    this.symptomObj.symptomNames
+                );
+            });
         },
         // 获取高度
         getHeight() {
@@ -312,6 +426,20 @@ export default {
                     padding: 8px;
                     color: #333;
                 }
+                .recommend-box {
+                    padding: 0 0 8px 8px;
+                    .recommend-item {
+                        color: #3978ff;
+                        text-decoration: underline;
+                    }
+                    .next-patch{
+                        text-align: right;
+                        padding-right: 20px;
+                        color: #3978ff;
+
+                    }
+                }
+
                 .top-box {
                     padding: 8px;
                     border-radius: 12px 12px 0 0;
@@ -368,6 +496,9 @@ export default {
                 .disease-item {
                     border-bottom: 2px solid #ddd;
                 }
+                .disease-item:nth-child(4) {
+                    border-bottom: none;
+                }
                 .item-bottom {
                     margin-left: 10px;
                     .department-title {
@@ -388,6 +519,22 @@ export default {
                             font-weight: bold;
                             padding: 5px 0px 0 0;
                         }
+                    }
+                }
+                .drugList-box {
+                    .disease-box {
+                        display: inline-block;
+                        padding: 8px 0px;
+                    }
+                    .disease-item:nth-child(4) {
+                        border-bottom: 2px solid #ddd;
+                    }
+                    .disease-item:nth-child(6) {
+                        border-bottom: none;
+                    }
+                    .link {
+                        position: static !important;
+                        font-size: 14px !important;
                     }
                 }
             }

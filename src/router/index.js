@@ -56,8 +56,15 @@ const router = new Router({
                             component: () => import('../views/DrugInquiry.vue'),
                         }
                     ]
-                },  
-                {
+                },{
+                    path: '/moreDisease',
+                    name: 'moreDisease',
+                    meta: {
+                        title: '更多疾病',
+                        requireAuth: true
+                    },
+                    component: () => import('../views/MoreDisease.vue'),
+                },{
                     path: '/diseaseDetail',
                     name: 'diseaseDetail',
                     meta: {
@@ -65,8 +72,16 @@ const router = new Router({
                         requireAuth: true
                     },
                     component: () => import('../views/DiseaseDetail.vue'),
-                },    
+                },
                 {
+                    path: '/moreDrug',
+                    name: 'moreDrug',
+                    meta: {
+                        title: '更多药物',
+                        requireAuth: true
+                    },
+                    component: () => import('../views/MoreDrug.vue'),
+                },{
                     path: '/feedback',
                     name: 'feedback',
                     meta: {
