@@ -1,0 +1,2 @@
+webpackJsonp([9],{"/kZp":function(t,e){},wkqA:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r={render:function(){this.$createElement;this._self._c;return this._m(0)},staticRenderFns:[function(){var t=this.$createElement,e=this._self._c||t;return e("div",[e("h2",[this._v("404，没找到您想要的资源")])])}]};var c=n("C7Lr")({name:"NotFound",components:{},data:function(){return{}},methods:{}},r,!1,function(t){n("/kZp")},"data-v-0dca86cc",null);e.default=c.exports}});
+//# sourceMappingURL=9.475ab304f8001cd203e2.js.map

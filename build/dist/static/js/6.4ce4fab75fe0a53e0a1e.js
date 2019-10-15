@@ -1,0 +1,2 @@
+webpackJsonp([6],{Tuvc:function(e,n,t){"use strict";Object.defineProperty(n,"__esModule",{value:!0});var r={render:function(){var e=this.$createElement;return(this._self._c||e)("div")},staticRenderFns:[]};var u=t("C7Lr")({name:"DrugInquiry",components:{},data:function(){return{}},methods:{}},r,!1,function(e){t("ZrEp")},"data-v-71780d29",null);n.default=u.exports},ZrEp:function(e,n){}});
+//# sourceMappingURL=6.4ce4fab75fe0a53e0a1e.js.map

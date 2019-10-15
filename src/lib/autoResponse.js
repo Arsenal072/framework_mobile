@@ -57,3 +57,14 @@ export function autoResponse(navItem, inputText){
     }
     return obj
 }
+export function getTip(id){
+    let tip = ''
+    if(id==0){
+        tip = ',您可以参考以下方式向我提问哦~'
+    }else if(id==1){
+        tip = '，您是否查找以下疾病'
+    }else if(id==2){
+        tip = '，你是否在查找以下药物'
+    }
+    return tip
+}

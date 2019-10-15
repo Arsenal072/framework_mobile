@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-14 21:03:02
+ * @Last Modified time: 2019-10-15 12:08:33
  */
 <!-- 主页 -->
 <template>
@@ -17,9 +17,9 @@
                     <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                     <div class="left-bubble">
                         <span class="bubble-text" v-if='item.content&&item.content.text'>{{item.content.text}}</span>
-                        <div v-if="item.recommendList&&item.recommendList.length" class="recommend-box">
+                        <div v-if="item.type!=0&&item.recommendList" class="recommend-box">
                             <p v-for="(i, ind) in item.recommendList" :key="ind" class="recommend-item" @click="send(i.name)">{{i.name}}</p>
-                            <p @click="nextPatch" class="next-patch">下一批</p>
+                            <p @click="nextPatch(index)" class="next-patch">下一批</p>
                         </div>
                         <div v-if="item.diagnoseResult||item.diseaseList||item.drugList">
                             <div v-if="item.type==1">
@@ -73,8 +73,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-else>
-
+                        <div v-if="item.type==0&&!item.diagnoseResult&&!item.diseaseList&&!item.drugList">
+                            <span class="bubble-text">小U暂不能理解您的意思，没找到您要查找的问题{{item.notFoundTip}}</span>
+                            <div class="recommend-box">
+                                <p v-for="(i, ind) in item.recommendList" :key="ind" class="recommend-item" @click="send(i.name)">{{i.name}}</p>
+                                <p @click="nextPatch(index)" class="next-patch">下一批</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,7 +104,7 @@
 import Header from "../components/Header";
 import InputBox from "../components/InputBox";
 import Nav from "../components/Nav";
-import { autoResponse } from "../lib/autoResponse";
+import { autoResponse, getTip } from "../lib/autoResponse";
 import {
     inquiry,
     querySymptomByPage,
@@ -155,7 +159,7 @@ export default {
             pageCount: 1,
             symptomId: "",
             inputText: "",
-            offsetTop: 30,
+            offsetTop: 0,
             genderAndAge: {
                 age: 24,
                 gender: "男"
@@ -178,7 +182,6 @@ export default {
         nav(item) {
             this.navItem = item;
             if (item.type != "意见反馈") {
-                // this.$router.push(item.path);
                 this._response(item, "");
             } else {
                 window.location.href =
@@ -194,7 +197,7 @@ export default {
                     icon: "icon-tubiao_guke",
                     content: inputText
                 });
-                this.getHeight();
+                // this.getHeight();
                 this._getInquryType(inputText);
             }
         },
@@ -230,21 +233,11 @@ export default {
             });
         },
         // 下一批
-        nextPatch() {
+        nextPatch(index) {
             this._queryRecommend(this.navItem.id).then(res => {
-                let obj = autoResponse(this.navItem, '');
-                this.arr[this.arr.length-1] = {
-                    source: "U",
-                    icon: "icon-customer",
-                    content: obj,
-                    recommendList: res.data.data
-                }
-                // this.arr.push({
-                //     source: "U",
-                //     icon: "icon-customer",
-                //     content: obj,
-                //     recommendList: res.data.data
-                // });
+                let obj = autoResponse(this.navItem, "");
+                this.arr[index].recommendList = res.data.data;
+                localStorage.setItem("arr", JSON.stringify(this.arr));
                 this.getHeight();
             });
         },
@@ -264,15 +257,40 @@ export default {
                         "symptomList",
                         this.symptomObj.selectSymptomList
                     );
+                    this.arr.push(
+                        Object.assign(res.data, {
+                            source: "U"
+                        })
+                    );
+                    localStorage.setItem("arr", JSON.stringify(this.arr));
+                    this.getHeight();
+                } else if (
+                    res.data.type == 0 &&
+                    !res.data.diagnoseResult &&
+                    !res.data.diseaseList &&
+                    !res.data.drugList
+                ) {
+                    this._queryRecommend(this.navItem.id).then(res => {
+                        let recommendList = res.data.data;
+                        let notFoundTip = getTip(this.navItem.id);
+                        this.arr.push({
+                            source: "U",
+                            recommendList: res.data.data,
+                            notFoundTip: notFoundTip,
+                            type: 0
+                        });
+                    });
+                    localStorage.setItem("arr", JSON.stringify(this.arr));
+                    this.getHeight();
+                } else {
+                    this.arr.push(
+                        Object.assign(res.data, {
+                            source: "U"
+                        })
+                    );
+                    localStorage.setItem("arr", JSON.stringify(this.arr));
+                    this.getHeight();
                 }
-                this.arr.push(
-                    Object.assign(res.data, {
-                        source: "U"
-                        // icon: "icon-customer"
-                    })
-                );
-                localStorage.setItem("arr", JSON.stringify(this.arr));
-                this.getHeight();
             });
         },
         // 查看更多疾病
@@ -352,20 +370,20 @@ export default {
         },
         // 获取高度
         getHeight() {
-            let arr = document.getElementsByClassName("left-bubble");
+            let arr = document.getElementsByClassName("left-box");
             if (arr.length > 0) {
                 let height = arr[arr.length - 1].offsetTop;
-                this.offsetTop = this.offsetTop + height;
+                console.log('height',height)
+                this.offsetTop = this.offsetTop + 2*height;
                 let top = this.offsetTop ? this.offsetTop : height;
                 window.scrollTo({
-                    top: top - height,
+                    top: top,
                     behavior: "smooth"
                 });
             }
         }
     },
     created() {
-        this.nav(this.navList[0]);
         if (!localStorage.getItem("wechatConfigToken")) {
             localStorage.setItem(
                 "wechatConfigToken",
@@ -378,6 +396,8 @@ export default {
         ) {
             this.arr = JSON.parse(localStorage.getItem("arr"));
             this.getHeight();
+        }else{
+            this.nav(this.navList[0]);
         }
     }
 };
@@ -432,11 +452,10 @@ export default {
                         color: #3978ff;
                         text-decoration: underline;
                     }
-                    .next-patch{
+                    .next-patch {
                         text-align: right;
                         padding-right: 20px;
                         color: #3978ff;
-
                     }
                 }
 

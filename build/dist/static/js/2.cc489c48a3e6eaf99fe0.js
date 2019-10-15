@@ -1,2 +1,0 @@
-webpackJsonp([2],{dasV:function(e,n){},l1sy:function(e,n,t){"use strict";Object.defineProperty(n,"__esModule",{value:!0});var s={render:function(){var e=this.$createElement;return(this._self._c||e)("div",{staticClass:"feedback-wrapper"},[this._v("\n    意见反馈功能正在开发中，敬请期待！\n")])},staticRenderFns:[]};var a=t("C7Lr")({name:"Feedback",components:{},data:function(){return{}},methods:{}},s,!1,function(e){t("dasV")},null,null);n.default=a.exports}});
-//# sourceMappingURL=2.cc489c48a3e6eaf99fe0.js.map
