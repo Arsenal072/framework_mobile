@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-15 12:08:33
+ * @Last Modified time: 2019-10-15 16:55:32
  */
 <!-- 主页 -->
 <template>
@@ -14,15 +14,18 @@
         <div class="bubble-box" v-chat-scroll="{always: false, smooth: true}">
             <div v-for="(item, index) in arr" :key="index">
                 <div v-if="item.source&&item.source=='U'" class="left-box">
-                    <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                     <div class="left-bubble">
                         <span class="bubble-text" v-if='item.content&&item.content.text'>{{item.content.text}}</span>
                         <div v-if="item.type!=0&&item.recommendList" class="recommend-box">
                             <p v-for="(i, ind) in item.recommendList" :key="ind" class="recommend-item" @click="send(i.name)">{{i.name}}</p>
-                            <p @click="nextPatch(index)" class="next-patch">下一批</p>
+                            <p @click="nextPatch(index)" class="next-patch">刷 新</p>
                         </div>
                         <div v-if="item.diagnoseResult||item.diseaseList||item.drugList">
-                            <div v-if="item.type==1">
+                            <div v-if="item.diagnoseResult" class="top">
+                                <p class="top-title">诊断结果</p>
+                                <p class="diagnose-result">{{item.diagnoseResult}}</p>
+                            </div>
+                            <div v-if="item.type==1||item.type==4">
                                 <div class="top-box">
                                     <span>小U为你找到以下疾病</span>
                                     <span class="learn-more" v-if="item.diseaseList.length>3" @click="checkMoreDisease(item.diseaseList)">更多 ></span>
@@ -51,25 +54,13 @@
                                     <span>小U为你找到以下药物</span>
                                     <span class="learn-more" @click="checkMoreDrug(item.drugList)" v-if="item.drugList.length>3">更多 ></span>
                                 </div>
-                                <div v-for="(i,ind) in item.drugList" :key="ind" v-if="ind<5" @click="checkDetail(i)" class="disease-item">
+                                <div v-for="(i,ind) in item.drugList" :key="ind" v-if="ind<5" class="disease-item">
                                     <div class="disease-box">
-                                        <!-- <div>
-                                            <span class="iconfont icon-bingli"></span>
-                                        </div> -->
                                         <div class="top-title">
                                             <span class="title big-title" @click="checkDrugDetail(i.url)">{{i.name}}</span>
                                             <a :href="i.url" class="link">查看百科</a>
-                                            <!-- <span class="desc">{{i.desc}}</span> -->
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div v-if="item.type==3" class="symptom-box">
-                                <div class="top-box">
-                                    <span>诊断结果</span>
-                                </div>
-                                <div class="detail-info">
-                                    <span>{{item.diagnoseResult}}</span>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +75,6 @@
                 </div>
                 <div v-else class="right-box">
                     <div class="right-bubble">{{item.content}}</div>
-                    <!-- <span :class="['iconfont',`${item.icon}`]"></span> -->
                 </div>
             </div>
         </div>
@@ -197,7 +187,6 @@ export default {
                     icon: "icon-tubiao_guke",
                     content: inputText
                 });
-                // this.getHeight();
                 this._getInquryType(inputText);
             }
         },
@@ -246,7 +235,6 @@ export default {
             let params = {
                 inputText: inputValue,
                 wechatConfigToken: 1
-                // localStorage.getItem("wechatConfigToken")?localStorage.getItem("wechatConfigToken"):1
             };
             inquiry(params).then(res => {
                 if (res.data.type == 3) {
@@ -338,10 +326,10 @@ export default {
                         Object.assign({
                             source: "U",
                             diseaseList: res.data.diseaseNodes,
-                            type: 1,
-                            diagnoseResult: "11"
+                            type: 1
                         })
                     );
+                    this.getHeight()
                     localStorage.setItem("arr", JSON.stringify(this.arr));
                 } else {
                     this.$set(
@@ -373,8 +361,8 @@ export default {
             let arr = document.getElementsByClassName("left-box");
             if (arr.length > 0) {
                 let height = arr[arr.length - 1].offsetTop;
-                console.log('height',height)
-                this.offsetTop = this.offsetTop + 2*height;
+                console.log("height", height);
+                this.offsetTop = this.offsetTop + 2 * height;
                 let top = this.offsetTop ? this.offsetTop : height;
                 window.scrollTo({
                     top: top,
@@ -384,19 +372,17 @@ export default {
         }
     },
     created() {
-        if (!localStorage.getItem("wechatConfigToken")) {
-            localStorage.setItem(
-                "wechatConfigToken",
-                this.$route.query.wechatConfigToken
-            );
-        }
-        if (
-            localStorage.getItem("arr") &&
-            Object.keys(localStorage.getItem("arr")).length
-        ) {
+        // if (!localStorage.getItem("wechatConfigToken")) {
+        //     localStorage.setItem(
+        //         "wechatConfigToken",
+        //         this.$route.query.wechatConfigToken
+        //     );
+        // }
+        console.log('localStorage.getItem',localStorage.getItem("arr"))
+        if (localStorage.getItem("arr")) {
             this.arr = JSON.parse(localStorage.getItem("arr"));
             this.getHeight();
-        }else{
+        } else {
             this.nav(this.navList[0]);
         }
     }
@@ -469,6 +455,28 @@ export default {
                         padding-right: 10px;
                         color: #fff;
                     }
+                }
+                .top {
+                    .top-title {
+                        background-color: #3978ff;
+                        color: #fff;
+                        border-radius: 12px 12px 0 0;
+                        padding: 8px;
+                    }
+                    .diagnose-result {
+                        padding: 10px 8px;
+                    }
+                }
+                .formal {
+                    padding: 8px;
+                    // border-radius: 12px 12px 0 0;
+                    // background-color: #3978ff;
+                    // color: #fff;
+                    // .learn-more {
+                    //     float: right;
+                    //     padding-right: 10px;
+                    //     color: #fff;
+                    // }
                 }
                 .disease-box {
                     display: flex;
@@ -601,17 +609,15 @@ export default {
     .action-sheet {
         padding-bottom: 10px;
         .symptom-item-box {
-            display: flex;
             padding: 0 10px;
             padding-top: 10px;
-            flex-wrap: wrap;
-            justify-content: space-between;
             .symptom-item {
                 display: inline-block;
                 border: 1px solid #3978ff;
                 border-radius: 5px;
                 padding: 3px 8px;
                 margin-bottom: 8px;
+                margin-right: 10px;
                 font-size: 14px;
             }
             .selectSymptom {
