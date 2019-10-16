@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-10-10 17:09:30 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-14 17:59:16
+ * @Last Modified time: 2019-10-16 16:34:02
  */
 <!-- 疾病详情 -->
 <template>
@@ -94,7 +94,11 @@ export default {
         }
     },
     created() {
-        this.diseaseObj = this.$route.query.diseaseObj;
+        if(localStorage.getItem('diseaseDetail')){
+            this.diseaseObj = JSON.parse(localStorage.getItem('diseaseDetail'))
+        }else{
+            this.diseaseObj = this.$route.query.diseaseObj;
+        }
     }
 };
 </script>

@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-10-14 17:50:31 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-14 19:56:53
+ * @Last Modified time: 2019-10-16 16:45:10
  */
 <!-- 更多疾病 -->
 <template>
@@ -14,7 +14,7 @@
                 </div>
                 <div class="top-title">
                     <span class="title big-title">{{item.name}}</span>
-                    <a :href="item.url" class="link">查看百科</a>
+                    <span @click.stop="checkDrugDetail(item.url)" class="link">查看百科</span>
                     <span class="desc">{{item.desc}}</span>
                 </div>
             </div>
@@ -40,17 +40,30 @@ export default {
     },
 
     methods: {
-        checkDetail(item){
+        checkDetail(item) {
+            localStorage.setItem("diseaseDetail", JSON.stringify(item));
             this.$router.push({
-                path: "/diseaseDetail",
+                name: "diseaseDetail",
                 query: {
                     diseaseObj: item
                 }
             });
+        },
+        // 查看药物详情
+        checkDrugDetail(url) {
+            window.location.href = url;
         }
     },
     created() {
-        this.diseaseList = this.$route.query.diseaseList;
+        if (localStorage.getItem("diseaseList")) {
+            this.diseaseList = JSON.parse(localStorage.getItem("diseaseList"));
+        } else {
+            this.diseaseList = this.$route.query.diseaseList;
+            localStorage.setItem(
+                "diseaseList",
+                JSON.stringify(this.diseaseList)
+            );
+        }
     }
 };
 </script>

@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-15 16:55:32
+ * @Last Modified time: 2019-10-16 16:44:23
  */
 <!-- 主页 -->
 <template>
@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="top-title">
                                             <span class="title big-title">{{i.name}}</span>
-                                            <a :href="i.url" class="link">查看百科</a>
+                                            <span class="link" @click.stop="checkDrugDetail(i.url)">查看百科</span>
                                             <span class="desc">{{i.desc}}</span>
                                         </div>
                                     </div>
@@ -284,7 +284,7 @@ export default {
         // 查看更多疾病
         checkMoreDisease(diseaseList) {
             this.$router.push({
-                path: "/moreDisease",
+                name: 'moreDisease',
                 query: {
                     diseaseList: diseaseList
                 }
@@ -361,7 +361,6 @@ export default {
             let arr = document.getElementsByClassName("left-box");
             if (arr.length > 0) {
                 let height = arr[arr.length - 1].offsetTop;
-                console.log("height", height);
                 this.offsetTop = this.offsetTop + 2 * height;
                 let top = this.offsetTop ? this.offsetTop : height;
                 window.scrollTo({
@@ -378,13 +377,15 @@ export default {
         //         this.$route.query.wechatConfigToken
         //     );
         // }
-        console.log('localStorage.getItem',localStorage.getItem("arr"))
+        // console.log('localStorage.getItem',localStorage.getItem("arr"))
         if (localStorage.getItem("arr")) {
             this.arr = JSON.parse(localStorage.getItem("arr"));
             this.getHeight();
         } else {
             this.nav(this.navList[0]);
         }
+        localStorage.removeItem('diseaseDetail')
+        localStorage.removeItem('diseaseList')
     }
 };
 </script>
