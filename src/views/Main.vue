@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-16 16:44:23
+ * @Last Modified time: 2019-10-16 17:48:28
  */
 <!-- 主页 -->
 <template>
@@ -11,7 +11,7 @@
         <Nav @nav="nav" :navList="navList"></Nav>
         <router-view class="nav-model"></router-view>
         <input-box @send='send' class="input-box"></input-box>
-        <div class="bubble-box" v-chat-scroll="{always: false, smooth: true}">
+        <div class="bubble-box">
             <div v-for="(item, index) in arr" :key="index">
                 <div v-if="item.source&&item.source=='U'" class="left-box">
                     <div class="left-bubble">
@@ -284,7 +284,7 @@ export default {
         // 查看更多疾病
         checkMoreDisease(diseaseList) {
             this.$router.push({
-                name: 'moreDisease',
+                name: "moreDisease",
                 query: {
                     diseaseList: diseaseList
                 }
@@ -329,7 +329,7 @@ export default {
                             type: 1
                         })
                     );
-                    this.getHeight()
+                    this.getHeight();
                     localStorage.setItem("arr", JSON.stringify(this.arr));
                 } else {
                     this.$set(
@@ -360,12 +360,16 @@ export default {
         getHeight() {
             let arr = document.getElementsByClassName("left-box");
             if (arr.length > 0) {
-                let height = arr[arr.length - 1].offsetTop;
-                this.offsetTop = this.offsetTop + 2 * height;
-                let top = this.offsetTop ? this.offsetTop : height;
-                window.scrollTo({
-                    top: top,
-                    behavior: "smooth"
+                // let height = arr[arr.length - 1].offsetTop;
+                // this.offsetTop = this.offsetTop + 2 * height;
+                // let top = this.offsetTop ? this.offsetTop : height;
+                // window.scrollTo({
+                //     top: top,
+                //     behavior: "smooth"
+                // });
+                this.$nextTick(() => {
+                    document.body.scrollTop = document.body.scrollHeight;
+                    console.log(document.body.scrollTop);
                 });
             }
         }
@@ -384,8 +388,8 @@ export default {
         } else {
             this.nav(this.navList[0]);
         }
-        localStorage.removeItem('diseaseDetail')
-        localStorage.removeItem('diseaseList')
+        localStorage.removeItem("diseaseDetail");
+        localStorage.removeItem("diseaseList");
     }
 };
 </script>
