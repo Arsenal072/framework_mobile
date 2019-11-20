@@ -26,7 +26,7 @@ const router = new Router({
                         title: 'U宝',
                         requireAuth: true
                     },
-                    component: () => import('../views/Main.vue'),
+                    component: () => import('../views/testScroll.vue'),
                     children: [
                         {
                             path: '/guidance',

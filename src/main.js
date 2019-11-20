@@ -13,8 +13,6 @@ import "vux/src/styles/reset.less";
 import './assets/iconfont/iconfont.css'
 import "./assets/index.css";
 import  { ToastPlugin,ConfirmPlugin,AlertPlugin } from 'vux'
-import VueChatScroll from 'vue-chat-scroll'
-Vue.use(VueChatScroll)
 
 //Vux 插件注册
 Vue.use(ConfirmPlugin)

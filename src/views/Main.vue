@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-08-26 19:43:22 
  * @Last Modified by: CGQ
- * @Last Modified time: 2019-10-16 17:48:28
+ * @Last Modified time: 2019-10-21 13:58:14
  */
 <!-- 主页 -->
 <template>
@@ -104,7 +104,7 @@ import {
     recommendDrug
 } from "../service/index";
 import { Button, ActionSheet } from "vant";
-
+import { AlertModule } from "vux";
 export default {
     name: "Main",
     components: {
@@ -382,6 +382,19 @@ export default {
         //     );
         // }
         // console.log('localStorage.getItem',localStorage.getItem("arr"))
+        // 显示
+        let a = 1
+        this.$vux.alert.show({
+            title: "Vux is Cool",
+            content: "Do you agree?",
+            onHide() {
+                if(a==1){
+                    console.log("aaaa");
+                }else{
+                    console.log('fdgfdgdf')
+                }
+            }
+        });
         if (localStorage.getItem("arr")) {
             this.arr = JSON.parse(localStorage.getItem("arr"));
             this.getHeight();
