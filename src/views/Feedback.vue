@@ -7,11 +7,7 @@
 <!--  -->
 <template>
     <div class="feedback-wrapper">
-        <div class="page" style="display:block">
-            <div class="pinch-zoom">
-                <img src="../assets/images/IMG_2969.jpg" />
-            </div>
-        </div>
+
     </div>
 </template>
 
@@ -27,21 +23,6 @@ export default {
 
     methods: {},
     mounted() {
-        let el = document.querySelector(".pinch-zoom");
-        let pz = new PinchZoom(el, {
-            draggableUnzoomed: false,
-            minZoom: 1,
-            onZoomStart: function(object, event) {
-                // Do something on zoom start
-                // You can use any Pinchzoom method by calling object.method()
-            },
-            onZoomEnd: function(object, event) {
-                // Do something on zoom end
-            }
-        });
-        // $("div.pinch-zoom").each(function() {
-        //     new PinchZoom($(this), {});
-        // });
     }
 };
 </script>

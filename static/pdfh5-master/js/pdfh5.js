@@ -362,7 +362,7 @@
             },
             setContainerY: function (y) {
                 y = y.toFixed(2);
-                return this.container.height(y);
+                return this.container.height('100%');
             },
             setupMarkup: function () {
                 this.container = $('<div class="pinch-zoom-container"></div>');

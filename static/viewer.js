@@ -1,17 +1,17 @@
 /*!
- * Viewer.js v1.3.2
+ * Viewer.js v1.5.0
  * https://fengyuanchen.github.io/viewerjs
  *
  * Copyright 2015-present Chen Fengyuan
  * Released under the MIT license
  *
- * Date: 2019-01-24T11:01:33.473Z
+ * Date: 2019-11-23T05:10:26.193Z
  */
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Viewer = factory());
+  (global = global || self, global.Viewer = factory());
 }(this, (function () { 'use strict';
 
   function _typeof(obj) {
@@ -48,6 +48,55 @@
     if (protoProps) _defineProperties(Constructor.prototype, protoProps);
     if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
+  }
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
   }
 
   var DEFAULTS = {
@@ -161,12 +210,6 @@
     movable: true,
 
     /**
-     * Enable to zoom the image.
-     * @type {boolean}
-     */
-    zoomable: true,
-
-    /**
      * Enable to rotate the image.
      * @type {boolean}
      */
@@ -177,6 +220,30 @@
      * @type {boolean}
      */
     scalable: true,
+
+    /**
+     * Enable to zoom the image.
+     * @type {boolean}
+     */
+    zoomable: true,
+
+    /**
+     * Enable to zoom the current image by dragging on the touch screen.
+     * @type {boolean}
+     */
+    zoomOnTouch: true,
+
+    /**
+     * Enable to zoom the image by wheeling mouse.
+     * @type {boolean}
+     */
+    zoomOnWheel: true,
+
+    /**
+     * Enable to slide to the next or previous image by swiping on the touch screen.
+     * @type {boolean}
+     */
+    slideOnTouch: true,
 
     /**
      * Indicate if toggle the image size between its natural size
@@ -250,7 +317,7 @@
 
   var TEMPLATE = '<div class="viewer-container" touch-action="none">' + '<div class="viewer-canvas"></div>' + '<div class="viewer-footer">' + '<div class="viewer-title"></div>' + '<div class="viewer-toolbar"></div>' + '<div class="viewer-navbar">' + '<ul class="viewer-list"></ul>' + '</div>' + '</div>' + '<div class="viewer-tooltip"></div>' + '<div role="button" class="viewer-button" data-viewer-action="mix"></div>' + '<div class="viewer-player"></div>' + '</div>';
 
-  var IS_BROWSER = typeof window !== 'undefined';
+  var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
   var WINDOW = IS_BROWSER ? window : {};
   var IS_TOUCH_DEVICE = IS_BROWSER ? 'ontouchstart' in WINDOW.document.documentElement : false;
   var HAS_POINTER_EVENT = IS_BROWSER ? 'PointerEvent' in WINDOW : false;
@@ -449,6 +516,15 @@
     });
   }
   /**
+   * Escape a string for using in HTML.
+   * @param {String} value - The string to escape.
+   * @returns {String} Returns the escaped string.
+   */
+
+  function escapeHTMLEntities(value) {
+    return isString(value) ? value.replace(/&(?!amp;|quot;|#39;|lt;|gt;)/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : value;
+  }
+  /**
    * Check if the given element has a special class.
    * @param {Element} element - The element to check.
    * @param {string} value - The class to search.
@@ -456,6 +532,10 @@
    */
 
   function hasClass(element, value) {
+    if (!element || !value) {
+      return false;
+    }
+
     return element.classList ? element.classList.contains(value) : element.className.indexOf(value) > -1;
   }
   /**
@@ -465,7 +545,7 @@
    */
 
   function addClass(element, value) {
-    if (!value) {
+    if (!element || !value) {
       return;
     }
 
@@ -496,7 +576,7 @@
    */
 
   function removeClass(element, value) {
-    if (!value) {
+    if (!element || !value) {
       return;
     }
 
@@ -775,12 +855,12 @@
    * @param {string} url - The target url.
    * @example
    * // picture.jpg
-   * getImageNameFromURL('http://domain.com/path/to/picture.jpg?size=1280×960')
+   * getImageNameFromURL('https://domain.com/path/to/picture.jpg?size=1280×960')
    * @returns {string} A string contains the image name.
    */
 
   function getImageNameFromURL(url) {
-    return isString(url) ? url.replace(/^.*\//, '').replace(/[?&#].*$/, '') : '';
+    return isString(url) ? decodeURIComponent(url.replace(/^.*\//, '').replace(/[?&#].*$/, '')) : '';
   }
   var IS_SAFARI = WINDOW.navigator && /(Macintosh|iPhone|iPod|iPad).*AppleWebKit/i.test(WINDOW.navigator.userAgent);
   /**
@@ -846,7 +926,8 @@
    */
 
   function getMaxZoomRatio(pointers) {
-    var pointers2 = assign({}, pointers);
+    var pointers2 = _objectSpread2({}, pointers);
+
     var ratios = [];
     forEach(pointers, function (pointer, pointerId) {
       delete pointers2[pointerId];
@@ -880,7 +961,7 @@
       endX: pageX,
       endY: pageY
     };
-    return endOnly ? end : assign({
+    return endOnly ? end : _objectSpread2({
       timeStamp: Date.now(),
       startX: pageX,
       startY: pageY
@@ -954,8 +1035,10 @@
       var element = this.element,
           options = this.options,
           list = this.list;
-      var items = [];
-      forEach(this.images, function (image, i) {
+      var items = []; // initList may be called in this.update, so should keep idempotent
+
+      list.innerHTML = '';
+      forEach(this.images, function (image, index) {
         var src = image.src;
         var alt = image.alt || getImageNameFromURL(src);
         var url = options.url;
@@ -967,12 +1050,21 @@
         }
 
         if (src || url) {
-          items.push('<li>' + '<img' + " src=\"".concat(src || url, "\"") + ' role="button"' + ' data-viewer-action="view"' + " data-index=\"".concat(i, "\"") + " data-original-url=\"".concat(url || src, "\"") + " alt=\"".concat(alt, "\"") + '>' + '</li>');
+          var item = document.createElement('li');
+          var img = document.createElement('img');
+          img.src = src || url;
+          img.alt = alt;
+          img.setAttribute('data-index', index);
+          img.setAttribute('data-original-url', url || src);
+          img.setAttribute('data-viewer-action', 'view');
+          img.setAttribute('role', 'button');
+          item.appendChild(img);
+          list.appendChild(item);
+          items.push(item);
         }
       });
-      list.innerHTML = items.join('');
-      this.items = list.getElementsByTagName('li');
-      forEach(this.items, function (item) {
+      this.items = items;
+      forEach(items, function (item) {
         var image = item.firstElementChild;
         setData(image, 'filled', true);
 
@@ -1136,16 +1228,19 @@
           canvas = this.canvas;
       var document = this.element.ownerDocument;
       addListener(viewer, EVENT_CLICK, this.onClick = this.click.bind(this));
-      addListener(viewer, EVENT_WHEEL, this.onWheel = this.wheel.bind(this), {
-        passive: false,
-        capture: true
-      });
       addListener(viewer, EVENT_DRAG_START, this.onDragStart = this.dragstart.bind(this));
       addListener(canvas, EVENT_POINTER_DOWN, this.onPointerDown = this.pointerdown.bind(this));
       addListener(document, EVENT_POINTER_MOVE, this.onPointerMove = this.pointermove.bind(this));
       addListener(document, EVENT_POINTER_UP, this.onPointerUp = this.pointerup.bind(this));
       addListener(document, EVENT_KEY_DOWN, this.onKeyDown = this.keydown.bind(this));
       addListener(window, EVENT_RESIZE, this.onResize = this.resize.bind(this));
+
+      if (options.zoomable && options.zoomOnWheel) {
+        addListener(viewer, EVENT_WHEEL, this.onWheel = this.wheel.bind(this), {
+          passive: false,
+          capture: true
+        });
+      }
 
       if (options.toggleOnDblclick) {
         addListener(canvas, EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
@@ -1157,16 +1252,19 @@
           canvas = this.canvas;
       var document = this.element.ownerDocument;
       removeListener(viewer, EVENT_CLICK, this.onClick);
-      removeListener(viewer, EVENT_WHEEL, this.onWheel, {
-        passive: false,
-        capture: true
-      });
       removeListener(viewer, EVENT_DRAG_START, this.onDragStart);
       removeListener(canvas, EVENT_POINTER_DOWN, this.onPointerDown);
       removeListener(document, EVENT_POINTER_MOVE, this.onPointerMove);
       removeListener(document, EVENT_POINTER_UP, this.onPointerUp);
       removeListener(document, EVENT_KEY_DOWN, this.onKeyDown);
       removeListener(window, EVENT_RESIZE, this.onResize);
+
+      if (options.zoomable && options.zoomOnWheel) {
+        removeListener(viewer, EVENT_WHEEL, this.onWheel, {
+          passive: false,
+          capture: true
+        });
+      }
 
       if (options.toggleOnDblclick) {
         removeListener(canvas, EVENT_DBLCLICK, this.onDblclick);
@@ -1414,8 +1512,6 @@
           }
 
           break;
-
-        default:
       }
     },
     dragstart: function dragstart(event) {
@@ -1429,10 +1525,10 @@
       var buttons = event.buttons,
           button = event.button;
 
-      if (!this.viewed || this.showing || this.viewing || this.hiding // No primary button (Usually the left button)
-      // Note that touch events have no `buttons` or `button` property
-      || isNumber(buttons) && buttons !== 1 || isNumber(button) && button !== 0 // Open context menu
-      || event.ctrlKey) {
+      if (!this.viewed || this.showing || this.viewing || this.hiding // Handle mouse event and pointer event and ignore touch event
+      || (event.type === 'mousedown' || event.type === 'pointerdown' && event.pointerType === 'mouse') && ( // No primary button (Usually the left button)
+      isNumber(buttons) && buttons !== 1 || isNumber(button) && button !== 0 // Open context menu
+      || event.ctrlKey)) {
         return;
       } // Prevent default behaviours as page zooming in touch devices.
 
@@ -1449,9 +1545,9 @@
 
       var action = options.movable ? ACTION_MOVE : false;
 
-      if (Object.keys(pointers).length > 1) {
+      if (options.zoomOnTouch && options.zoomable && Object.keys(pointers).length > 1) {
         action = ACTION_ZOOM;
-      } else if ((event.pointerType === 'touch' || event.type === 'touchstart') && this.isSwitchable()) {
+      } else if (options.slideOnTouch && (event.pointerType === 'touch' || event.type === 'touchstart') && this.isSwitchable()) {
         action = ACTION_SWITCH;
       }
 
@@ -1657,9 +1753,8 @@
           }
         };
         addClass(viewer, CLASS_TRANSITION); // Force reflow to enable CSS3 transition
-        // eslint-disable-next-line
 
-        viewer.offsetWidth;
+        viewer.initialOffsetWidth = viewer.offsetWidth;
         addListener(viewer, EVENT_TRANSITION_END, shown, {
           once: true
         });
@@ -1714,10 +1809,13 @@
         var hidden = this.hidden.bind(this);
 
         var hide = function hide() {
-          addListener(viewer, EVENT_TRANSITION_END, hidden, {
-            once: true
-          });
-          removeClass(viewer, CLASS_IN);
+          // XXX: It seems the `event.stopPropagation()` method does not work here
+          setTimeout(function () {
+            addListener(viewer, EVENT_TRANSITION_END, hidden, {
+              once: true
+            });
+            removeClass(viewer, CLASS_IN);
+          }, 0);
         };
 
         this.transitioning = {
@@ -1728,9 +1826,9 @@
               removeListener(viewer, EVENT_TRANSITION_END, hidden);
             }
           }
-        };
+        }; // Note that the `CLASS_TRANSITION` class will be removed on pointer down (#255)
 
-        if (this.viewed) {
+        if (this.viewed && hasClass(this.image, CLASS_TRANSITION)) {
           addListener(this.image, EVENT_TRANSITION_END, hide, {
             once: true
           });
@@ -1757,13 +1855,13 @@
       var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.options.initialViewIndex;
       index = Number(index) || 0;
 
+      if (this.hiding || this.played || index < 0 || index >= this.length || this.viewed && index === this.index) {
+        return this;
+      }
+
       if (!this.isShown) {
         this.index = index;
         return this.show();
-      }
-
-      if (this.hiding || this.played || index < 0 || index >= this.length || this.viewed && index === this.index) {
-        return this;
       }
 
       if (this.viewing) {
@@ -1818,7 +1916,7 @@
       var onViewed = function onViewed() {
         var imageData = _this.imageData;
         var render = Array.isArray(options.title) ? options.title[1] : options.title;
-        title.innerHTML = isFunction(render) ? render.call(_this, image, imageData) : "".concat(alt, " (").concat(imageData.naturalWidth, " \xD7 ").concat(imageData.naturalHeight, ")");
+        title.innerHTML = escapeHTMLEntities(isFunction(render) ? render.call(_this, image, imageData) : "".concat(alt, " (").concat(imageData.naturalWidth, " \xD7 ").concat(imageData.naturalHeight, ")"));
       };
 
       var onLoad;
@@ -1836,6 +1934,8 @@
               this.imageInitializing.abort();
             }
           } else {
+            // Cancel download to save bandwidth.
+            image.src = '';
             removeListener(image, EVENT_LOAD, onLoad);
 
             if (this.timeout) {
@@ -2363,9 +2463,8 @@
           addClass(tooltipBox, CLASS_SHOW);
           addClass(tooltipBox, CLASS_FADE);
           addClass(tooltipBox, CLASS_TRANSITION); // Force reflow to enable CSS3 transition
-          // eslint-disable-next-line
 
-          tooltipBox.offsetWidth;
+          tooltipBox.initialOffsetWidth = tooltipBox.offsetWidth;
           addClass(tooltipBox, CLASS_IN);
         } else {
           addClass(tooltipBox, CLASS_SHOW);
@@ -2447,7 +2546,7 @@
           var img = item.querySelector('img');
           var image = images[i];
 
-          if (image) {
+          if (image && img) {
             if (image.src !== img.src) {
               indexes.push(i);
             }
@@ -2673,8 +2772,6 @@
 
             break;
           }
-
-        default:
       } // Override
 
 
