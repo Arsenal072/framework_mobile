@@ -26,7 +26,7 @@ const router = new Router({
                         title: 'U宝',
                         requireAuth: true
                     },
-                    component: () => import('../views/DrugInquiry.vue'),
+                    component: () => import('../views/Guidance.vue'),
                     children: [
                         {
                             path: '/guidance',
