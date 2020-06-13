@@ -8,11 +8,7 @@
 <template>
     <div class="recommend">
         <scroll ref="scroll" class="recommend-content">
-            <!-- :list="discList" -->
-            <div>
-                <span class="tip-content">未检测到在中办理过就诊卡，请选择绑定鬼地方个的刚发的多个个很过分很反感很反感法规和法国恢复规划发</span>
-            </div>
-            <div class="recommend-list">
+            <!-- <div class="recommend-list">
                 <h1 class="list-title">热门歌单推荐</h1>
                 <ul>
                     <li v-for="(item,index) in discList" class="item" :key="index">
@@ -25,8 +21,13 @@
                         </div>
                     </li>
                 </ul>
-            </div>
+            </div> -->
         </scroll>
+        <div style='width:500px; margin: 40px auto;'>
+            <input type="text" :value='ha' @input="ha=$event.target.value" v-focus>
+            <p>输入文字{{ha}}</p>
+        </div>
+
     </div>
 </template>
 
@@ -110,8 +111,16 @@ export default {
                     },
                     dissname: "许巍"
                 }
-            ]
+            ],
+            ha: ""
         };
+    },
+    directives:{
+        focus:{
+            inserted(el){
+                el.focus()
+            }
+        }
     },
     created() {},
     methods: {},
