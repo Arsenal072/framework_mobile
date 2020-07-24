@@ -125,6 +125,7 @@
         let newArr = this.sort()
         for (let i = 0; i < this.length; i++) {
           if (this[i] !== this[i + 1]) {
+              
             newArr.push(this[i])
           }
         }
