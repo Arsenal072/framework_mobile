@@ -2,7 +2,7 @@
  * @Author: CGQ 
  * @Date: 2019-09-02 19:50:39 
  * @Last Modified by: CGQ
- * @Last Modified time: 2020-05-07 20:53:52
+ * @Last Modified time: 2020-07-21 17:27:31
  */
 <!--  -->
 <template>
@@ -43,21 +43,13 @@ export default {
                 el.focus()
             }
         },
-        // model: {
-        //     inserted(el, binding){
+        model: {
+            inserted(el, binding){
                 
-        //     }
-        // }
+            }
+        }
     },
     methods: {},
-    created() {
-        console.log(111);
-        console.log(this.$refs["hello"]);
-        this.$nextTick(() => {
-            console.log(222);
-            console.log(this.$refs["hello"]);
-        });
-    },
     mounted() {
         console.log(333);
         console.log(this.$refs["hello"]);
@@ -65,10 +57,10 @@ export default {
             console.log(444);
             console.log(this.$refs["hello"]);
         });
-        // var pdfh5 = new Pdfh5("#pdf", {
-        //     pdfurl:
-        //         "https://yqey.zwjk.com/upload/pdf/3303820300-200424000058.pdf"
-        // });
+        var pdfh5 = new Pdfh5("#pdf", {
+            pdfurl:
+                "https://yqey.zwjk.com/upload/pdf/3303820300-200424000058.pdf"
+        });
     }
 }
 </script>

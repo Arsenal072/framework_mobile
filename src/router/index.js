@@ -26,7 +26,7 @@ const router = new Router({
                         title: 'U宝',
                         requireAuth: true
                     },
-                    component: () => import('../views/Guidance.vue'),
+                    component: () => import('../views/AskingDisease.vue'),
                     children: [
                         {
                             path: '/guidance',
@@ -101,7 +101,7 @@ const router = new Router({
                 },
                 {
                     path: '/',
-                    redirect: '/guidance'
+                    redirect: '/AskingDisease'
                 },
             ]
 })
